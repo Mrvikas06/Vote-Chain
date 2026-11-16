@@ -149,8 +149,26 @@ function AuthScreen({onSuccess}){
   const [faceDone,setFaceDone]=useState(false);
   const [termLines,setTermLines]=useState([]);
   const inputRefs=useRef([]);
+  const timersRef=useRef([]);
+  const intervalRef=useRef(null);
   const voter=VOTERS_DB[aadhaar];
-  const addTerm=(txt,color="var(--text2)",delay=0)=>setTimeout(()=>setTermLines(l=>[...l,{txt,color,id:Date.now()+Math.random()}]),delay);
+
+  useEffect(()=>{
+    return ()=>{
+      timersRef.current.forEach(clearTimeout);
+      if(intervalRef.current)clearInterval(intervalRef.current);
+    };
+  },[]);
+
+  const safeTimeout=(fn,delay)=>{
+    const id=setTimeout(fn,delay);
+    timersRef.current.push(id);
+    return id;
+  };
+
+  const addTerm=(txt,color="var(--text2)",delay=0)=>{
+    safeTimeout(()=>setTermLines(l=>[...l,{txt,color,id:Date.now()+Math.random()}]),delay);
+  };
 
   const handleAadhaar=()=>{
     if(!voter){setError("Aadhaar not found. Try: 123456789012");return;}
@@ -159,7 +177,7 @@ function AuthScreen({onSuccess}){
     addTerm("› Aadhaar validated ✓","#4ade80",400);
     addTerm(`› OTP dispatched to ${voter.registeredPhone}`,"#0ea5e9",800);
     addTerm("› Session token generated (SHA-256)","var(--text2)",1200);
-    setTimeout(()=>setStep(1),1500);
+    safeTimeout(()=>setStep(1),1500);
   };
   const handleOtpInput=(val,idx)=>{
     const d=[...otpDigits];d[idx]=val.replace(/\D/,"").slice(-1);setOtpDigits(d);setError("");
@@ -177,13 +195,22 @@ function AuthScreen({onSuccess}){
     setError("");setTermLines([]);
     addTerm("› OTP verified ✓","#4ade80",0);
     addTerm("› Initiating DeepFace biometric scan…",undefined,400);
-    setTimeout(()=>{setStep(2);startFace();},700);
+    safeTimeout(()=>{setStep(2);startFace();},700);
   };
   const startFace=()=>{
     let p=0;
     const msgs=["Detecting face landmarks…","Cross-checking Aadhaar biometric DB…","Anti-spoofing liveness check…","Identity confirmed ✓"];
     msgs.forEach((m,i)=>addTerm("› "+m,i===3?"#4ade80":"var(--text2)",i*700));
-    const iv=setInterval(()=>{p+=Math.random()*6+3;setFaceProgress(Math.min(p,100));if(p>=100){clearInterval(iv);setFaceDone(true);setTimeout(()=>onSuccess(voter),700);}},100);
+    intervalRef.current=setInterval(()=>{
+      p+=Math.random()*6+3;
+      setFaceProgress(Math.min(p,100));
+      if(p>=100){
+        clearInterval(intervalRef.current);
+        intervalRef.current=null;
+        setFaceDone(true);
+        safeTimeout(()=>onSuccess(voter),700);
+      }
+    },100);
   };
 
   return(
@@ -263,6 +290,19 @@ function VoteScreen({voter,candidates,onVoted}){
   const [stage,setStage]=useState("pick");
   const [encProgress,setEncProgress]=useState(0);
   const [encLines,setEncLines]=useState([]);
+  const timersRef=useRef([]);
+
+  useEffect(()=>{
+    return ()=>{
+      timersRef.current.forEach(clearTimeout);
+    };
+  },[]);
+
+  const safeTimeout=(fn,delay)=>{
+    const id=setTimeout(fn,delay);
+    timersRef.current.push(id);
+    return id;
+  };
 
   const handleSubmit=()=>{
     setStage("encrypting");
@@ -275,11 +315,11 @@ function VoteScreen({voter,candidates,onVoted}){
       ["Endorsing via Raft consensus…","var(--text2)",3500],
       ["Block confirmed on ledger ✓","#4ade80",4200],
     ];
-    steps.forEach(([txt,color,delay],i)=>setTimeout(()=>{
+    steps.forEach(([txt,color,delay],i)=>safeTimeout(()=>{
       setEncLines(l=>[...l,{txt,color,id:Date.now()+i}]);
       setEncProgress(Math.round((i+1)/steps.length*100));
     },delay));
-    setTimeout(()=>onVoted(selected),5000);
+    safeTimeout(()=>onVoted(selected),5000);
   };
 
   if(stage==="encrypting")return(
@@ -471,17 +511,56 @@ function ResultsScreen({candidates}){
   );
 }
 
-function AuditScreen({defaultHash}){
+function AuditScreen({defaultHash,receiptLedger}){
   const [hash,setHash]=useState(defaultHash||"");
   const [loading,setLoading]=useState(false);
   const [result,setResult]=useState(null);
   const [lines,setLines]=useState([]);
+  const timersRef=useRef([]);
+
+  useEffect(()=>{
+    return ()=>{
+      timersRef.current.forEach(clearTimeout);
+    };
+  },[]);
+
+  const safeTimeout=(fn,delay)=>{
+    const id=setTimeout(fn,delay);
+    timersRef.current.push(id);
+    return id;
+  };
+
   const verify=()=>{
-    if(!hash.startsWith("0x")||hash.length<10){setResult({valid:false});return;}
+    const trimmed=hash.trim();
+    if(!trimmed.startsWith("0x")||trimmed.length<10){
+      setResult({valid:false,error:"Invalid hash format. Receipt hash must start with 0x and be at least 10 characters."});
+      return;
+    }
     setLoading(true);setResult(null);setLines([]);
-    const steps=[["Connecting to Hyperledger Fabric gateway…",300],["Querying CouchDB state database…",900],["Retrieving block metadata…",1500],["Validating zk-SNARK proof…",2100],["Cross-checking Raft consensus log…",2700],["Verification complete ✓",3300]];
-    steps.forEach(([txt,delay])=>setTimeout(()=>setLines(l=>[...l,{txt,id:Date.now()+delay}]),delay));
-    setTimeout(()=>{setLoading(false);setResult({valid:true,block:genBlock(),timestamp:new Date(Date.now()-Math.random()*3600000).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"medium"}),confirmations:Math.floor(200+Math.random()*800)});},3800);
+    const steps=[
+      ["Connecting to Hyperledger Fabric gateway…",300],
+      ["Querying CouchDB state database…",800],
+      ["Retrieving block metadata…",1400],
+      ["Validating zk-SNARK proof…",2000],
+      ["Cross-checking Raft consensus log…",2600],
+      ["Verification complete ✓",3200]
+    ];
+    steps.forEach(([txt,delay])=>safeTimeout(()=>setLines(l=>[...l,{txt,id:Date.now()+delay}]),delay));
+    safeTimeout(()=>{
+      setLoading(false);
+      const auditRes=auditReceipt(trimmed,receiptLedger);
+      if(auditRes.valid){
+        setResult({
+          valid:true,
+          block:auditRes.block,
+          timestamp:auditRes.timestamp,
+          confirmations:auditRes.confirmations,
+          constituency:auditRes.constituency
+        });
+      }else{
+        setResult({valid:false,error:auditRes.error});
+      }
+    },3600);
   };
   return(
     <div style={{minHeight:"100vh",paddingTop:52,background:"var(--bg)"}}>
@@ -511,7 +590,7 @@ function AuditScreen({defaultHash}){
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:result.valid?14:0}}>
               <span style={{fontSize:26}}>{result.valid?"✅":"❌"}</span>
               <div><p style={{fontFamily:"var(--font)",fontWeight:700,fontSize:15,color:result.valid?"var(--green)":"var(--red)"}}>{result.valid?"Vote Verified on Blockchain":"Hash Not Found"}</p>
-              <p style={{fontSize:12,color:"var(--text3)"}}>{result.valid?"Your vote was counted correctly":"Check the hash and try again"}</p></div>
+              <p style={{fontSize:12,color:"var(--text3)"}}>{result.valid?"Your vote was counted correctly":(result.error||"Check the hash and try again")}</p></div>
             </div>
             {result.valid&&(
               <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -582,7 +661,7 @@ function App(){
       {screen==="vote"&&<VoteScreen voter={voter} candidates={candidates} onVoted={handleVoted}/>}
       {screen==="success"&&<SuccessScreen voter={voter} hash={voteData.hash} blockId={voteData.blockId} onAudit={()=>setScreen("audit")} onResults={()=>setScreen("results")} onReset={handleReset}/>}
       {screen==="results"&&<ResultsScreen candidates={candidates}/>}
-      {screen==="audit"&&<AuditScreen defaultHash={voteData?.hash||""}/>}
+      {screen==="audit"&&<AuditScreen defaultHash={voteData?.hash||""} receiptLedger={receiptLedger}/>}
       <NavBar screen={screen} onNavigate={navigate}/>
     </div>
   );
