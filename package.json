@@ -1,0 +1,19 @@
+{
+  "name": "vote-chain",
+  "version": "1.0.0",
+  "description": "Blockchain-based e-voting system prototype",
+  "main": "index.html",
+  "scripts": {
+    "test": "node --test test/**/*.test.js",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "blockchain",
+    "voting",
+    "e-voting",
+    "hyperledger",
+    "cryptography"
+  ],
+  "author": "vikas kumar singh",
+  "license": "MIT"
+}
