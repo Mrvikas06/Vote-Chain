@@ -30,7 +30,7 @@ const {
   auditReceipt
 } = window.VoteChain || {};
 
-function StatusBar({voter}){
+function StatusBar({voter,onReset}){
   const [time,setTime]=useState(new Date());
   useEffect(()=>{const t=setInterval(()=>setTime(new Date()),1000);return()=>clearInterval(t);},[]);
   return(
@@ -41,7 +41,12 @@ function StatusBar({voter}){
         <span style={{fontSize:11,color:"var(--text3)",fontFamily:"var(--mono)",display:"none"}}>Hyperledger Fabric v2.5</span>
       </div>
       <div style={{display:"flex",alignItems:"center",gap:12}}>
-        {voter&&<span style={{fontSize:12,color:"var(--text2)",fontFamily:"var(--mono)"}}>👤 {voter.name.split(" ")[0]}</span>}
+        {voter&&(
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <span style={{fontSize:12,color:"var(--text2)",fontFamily:"var(--mono)"}}>👤 {voter.name.split(" ")[0]}</span>
+            <button onClick={onReset} style={{background:"var(--bg3)",border:"1px solid var(--border2)",color:"var(--text3)",borderRadius:6,padding:"2px 8px",fontSize:10,cursor:"pointer",fontFamily:"var(--mono)"}}>Logout</button>
+          </div>
+        )}
         <span style={{fontSize:11,color:"var(--text3)",fontFamily:"var(--mono)"}}>{time.toLocaleTimeString("en-IN")}</span>
         <span className="tag" style={{background:"var(--bg3)",border:"1px solid var(--border2)",color:"var(--text2)"}}>🔒 TLS 1.3</span>
       </div>
@@ -100,7 +105,12 @@ function LandingScreen({onNavigate,candidates,blockchainLog}){
           </div>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:12,marginBottom:36}}>
-          {[{label:"Eligible Voters",value:"97.2 Cr",icon:"👥",color:"#0ea5e9"},{label:"Votes Cast",value:fmtNum(total),icon:"🗳️",color:"#10b981"},{label:"Blocks Confirmed",value:"4,49,821",icon:"⛓️",color:"#a78bfa"},{label:"Turnout",value:"43.6%",icon:"📈",color:"#f59e0b"}].map(s=>(
+          {[
+            {label:"Eligible Voters",value:"97.2 Cr",icon:"👥",color:"#0ea5e9"},
+            {label:"Votes Cast",value:fmtNum(total),icon:"🗳️",color:"#10b981"},
+            {label:"Blocks Confirmed",value:fmtNum(449821 + Math.max(0, logs.length - INITIAL_BLOCKCHAIN.length)),icon:"⛓️",color:"#a78bfa"},
+            {label:"Turnout",value:((total / 1028300) * 100).toFixed(1) + "%",icon:"📈",color:"#f59e0b"}
+          ].map(s=>(
             <div key={s.label} className="card" style={{padding:"16px 18px"}}>
               <div style={{fontSize:20,marginBottom:6}}>{s.icon}</div>
               <div style={{fontFamily:"var(--font)",fontWeight:800,fontSize:20,color:s.color,marginBottom:2}}>{s.value}</div>
@@ -117,18 +127,26 @@ function LandingScreen({onNavigate,candidates,blockchainLog}){
           <div style={{overflowX:"auto"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontFamily:"var(--mono)",fontSize:12}}>
               <thead><tr style={{borderBottom:"1px solid var(--border)"}}>
-                {["Block","Hash","Transactions","Time","Status"].map(h=><th key={h} style={{padding:"10px 14px",textAlign:"left",color:"var(--text3)",fontWeight:500}}>{h}</th>)}
+                {["Block","Hash","Transactions","Time","Status","Action"].map(h=><th key={h} style={{padding:"10px 14px",textAlign:"left",color:"var(--text3)",fontWeight:500}}>{h}</th>)}
               </tr></thead>
               <tbody>
-                {logs.map((b,i)=>(
-                  <tr key={b.block} style={{borderBottom:"1px solid var(--border)",animation:`chainAdd 0.4s ${i*0.1}s ease both`}}>
-                    <td style={{padding:"11px 14px",color:"var(--accent)",fontWeight:700}}>{b.block}</td>
-                    <td style={{padding:"11px 14px",color:"var(--text2)"}}>{b.hash}</td>
-                    <td style={{padding:"11px 14px",color:"var(--text)"}}>{fmtNum(b.tx)}</td>
-                    <td style={{padding:"11px 14px",color:"var(--text3)"}}>{b.time}</td>
-                    <td style={{padding:"11px 14px"}}><span className="tag" style={{background:"#0c2a0c",border:"1px solid #14532d",color:"#4ade80"}}>✓ {b.status}</span></td>
-                  </tr>
-                ))}
+                {logs.map((b,i)=>{
+                  const shortHash = b.hash.length > 18 ? b.hash.slice(0, 6) + "..." + b.hash.slice(-4) : b.hash;
+                  return (
+                    <tr key={b.block} style={{borderBottom:"1px solid var(--border)",animation:`chainAdd 0.4s ${i*0.1}s ease both`}}>
+                      <td style={{padding:"11px 14px",color:"var(--accent)",fontWeight:700}}>{b.block}</td>
+                      <td style={{padding:"11px 14px",color:"var(--text2)"}} title={b.fullHash||b.hash}>{shortHash}</td>
+                      <td style={{padding:"11px 14px",color:"var(--text)"}}>{fmtNum(b.tx)}</td>
+                      <td style={{padding:"11px 14px",color:"var(--text3)"}}>{b.time}</td>
+                      <td style={{padding:"11px 14px"}}><span className="tag" style={{background:"#0c2a0c",border:"1px solid #14532d",color:"#4ade80"}}>✓ {b.status}</span></td>
+                      <td style={{padding:"11px 14px"}}>
+                        <button className="demo-chip" onClick={()=>onNavigate("audit", b.fullHash||b.hash)} style={{padding:"2px 8px",fontSize:10}}>
+                          Audit
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -475,18 +493,23 @@ function SuccessScreen({voter,hash,blockId,onAudit,onResults,onReset}){
             </div>
           </div>
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:10}}>
           <button className="btn-ghost" style={{padding:11,fontSize:13}} onClick={onAudit}>🔍 Verify</button>
           <button className="btn-ghost" style={{padding:11,fontSize:13}} onClick={onResults}>📊 Results</button>
           <button className="btn-ghost" style={{padding:11,fontSize:13}} onClick={onReset}>← Home</button>
         </div>
+        <button className="btn-ghost" style={{width:"100%",padding:10,fontSize:12,color:"var(--accent)",borderColor:"var(--border2)"}} onClick={onReset}>
+          👤 Switch Voter & Cast Another Ballot
+        </button>
       </div>
     </div>
   );
 }
 
-function ResultsScreen({candidates}){
+function ResultsScreen({candidates,blockchainLog}){
   const cands=candidates||INITIAL_CANDIDATES;
+  const logs=blockchainLog||INITIAL_BLOCKCHAIN;
+  const latestBlock=logs[0]?.block||"#BLK-449822";
   const total=cands.reduce((a,c)=>a+c.votes,0);
   const sorted=[...cands].sort((a,b)=>b.votes-a.votes);
   const [animated,setAnimated]=useState(false);
@@ -535,7 +558,13 @@ function ResultsScreen({candidates}){
         <div className="card" style={{padding:0,overflow:"hidden"}}>
           <div style={{padding:"11px 18px",borderBottom:"1px solid var(--border)"}}><span style={{fontFamily:"var(--font)",fontWeight:700,fontSize:14,color:"var(--text)"}}>Smart Contract Audit Log</span></div>
           <div style={{padding:"12px 16px",fontFamily:"var(--mono)",fontSize:11,display:"flex",flexDirection:"column",gap:5}}>
-            {["TallyContract.autoTally() executed at block #449822","Chaincode verified 449,990 valid transactions","zk-SNARK proofs validated: 449,990 / 449,990","Result hash: 0x8f3c...e1a4 committed to ledger","Public verifier portal updated — 0 disputes"].map((l,i)=>(
+            {[
+              `TallyContract.autoTally() executed at block ${latestBlock}`,
+              `Chaincode verified ${fmtNum(total)} valid transactions`,
+              `zk-SNARK proofs validated: ${fmtNum(total)} / ${fmtNum(total)}`,
+              "Result hash: 0x8f3c...e1a4 committed to ledger",
+              "Public verifier portal updated — 0 disputes"
+            ].map((l,i)=>(
               <div key={l} style={{color:i===4?"#4ade80":"var(--text2)",display:"flex",gap:8}}><span style={{color:"var(--text3)"}}>›</span>{l}</div>
             ))}
           </div>
@@ -557,6 +586,14 @@ function AuditScreen({defaultHash,receiptLedger}){
       timersRef.current.forEach(clearTimeout);
     };
   },[]);
+
+  useEffect(()=>{
+    if(defaultHash){
+      setHash(defaultHash);
+      setResult(null);
+      setLines([]);
+    }
+  },[defaultHash]);
 
   const safeTimeout=(fn,delay)=>{
     const id=setTimeout(fn,delay);
@@ -674,11 +711,22 @@ function App(){
   const [screen,setScreen]=useState("home");
   const [voter,setVoter]=useState(null);
   const [voteData,setVoteData]=useState(null);
+  const [auditTargetHash,setAuditTargetHash]=useState("");
   const [candidates,setCandidates]=useState(INITIAL_CANDIDATES);
   const [blockchainLog,setBlockchainLog]=useState(INITIAL_BLOCKCHAIN);
   const [receiptLedger,setReceiptLedger]=useState({});
 
-  const navigate=useCallback((s)=>{if(s==="auth"&&voteData){setScreen("success");return;}setScreen(s);},[voteData]);
+  const navigate=useCallback((s,targetHash)=>{
+    if(targetHash){
+      setAuditTargetHash(targetHash);
+    }
+    if(s==="auth"&&voteData){
+      setScreen("success");
+      return;
+    }
+    setScreen(s);
+  },[voteData]);
+
   const handleAuth=(v)=>{setVoter(v);setScreen("vote");};
   const handleVoted=(candidate)=>{
     const res=recordVote({
@@ -692,18 +740,24 @@ function App(){
     setBlockchainLog(res.updatedBlockchainLog);
     setReceiptLedger(res.updatedLedger);
     setVoteData(res.receipt);
+    setAuditTargetHash(res.receipt.hash);
     setScreen("success");
   };
-  const handleReset=()=>{setVoter(null);setVoteData(null);setScreen("home");};
+  const handleReset=()=>{
+    setVoter(null);
+    setVoteData(null);
+    setScreen("home");
+  };
+
   return(
     <div style={{paddingBottom:56,fontFamily:"var(--font)"}}>
-      <StatusBar voter={voter}/>
+      <StatusBar voter={voter} onReset={handleReset}/>
       {screen==="home"&&<LandingScreen onNavigate={navigate} candidates={candidates} blockchainLog={blockchainLog}/>}
       {screen==="auth"&&<AuthScreen onSuccess={handleAuth}/>}
       {screen==="vote"&&<VoteScreen voter={voter} candidates={candidates} onVoted={handleVoted}/>}
-      {screen==="success"&&<SuccessScreen voter={voter} hash={voteData.hash} blockId={voteData.blockId} onAudit={()=>setScreen("audit")} onResults={()=>setScreen("results")} onReset={handleReset}/>}
-      {screen==="results"&&<ResultsScreen candidates={candidates}/>}
-      {screen==="audit"&&<AuditScreen defaultHash={voteData?.hash||""} receiptLedger={receiptLedger}/>}
+      {screen==="success"&&voteData&&<SuccessScreen voter={voter} hash={voteData.hash} blockId={voteData.blockId} onAudit={()=>navigate("audit", voteData.hash)} onResults={()=>navigate("results")} onReset={handleReset}/>}
+      {screen==="results"&&<ResultsScreen candidates={candidates} blockchainLog={blockchainLog}/>}
+      {screen==="audit"&&<AuditScreen defaultHash={auditTargetHash} receiptLedger={receiptLedger}/>}
       <NavBar screen={screen} onNavigate={navigate}/>
     </div>
   );
