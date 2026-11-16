@@ -608,6 +608,14 @@ function AuditScreen({defaultHash,receiptLedger}){
           <label style={{fontSize:11,color:"var(--text3)",fontFamily:"var(--mono)",display:"block",marginBottom:8,letterSpacing:1}}>VOTE RECEIPT HASH</label>
           <textarea value={hash} onChange={e=>{setHash(e.target.value);setResult(null);setLines([]);}} placeholder="Paste your 0x... receipt hash here" rows={3}
             style={{width:"100%",padding:"12px 14px",fontSize:11,lineHeight:1.7,resize:"none",wordBreak:"break-all"}}/>
+          <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginTop:8,marginBottom:4}}>
+            <span style={{fontSize:11,color:"var(--text3)",fontFamily:"var(--mono)"}}>Sample blocks:</span>
+            {INITIAL_BLOCKCHAIN.slice(0,2).map((b,idx)=>(
+              <button key={idx} type="button" className="demo-chip" onClick={()=>{setHash(b.fullHash||b.hash);setResult(null);setLines([]);}}>
+                {b.block}
+              </button>
+            ))}
+          </div>
           <button className="btn-primary" style={{width:"100%",padding:13,fontSize:14,marginTop:10}} disabled={!hash||loading} onClick={verify}>
             {loading?"⛓️ Querying blockchain nodes…":"VERIFY ON CHAIN →"}
           </button>
