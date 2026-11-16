@@ -4,7 +4,7 @@
   "description": "Blockchain-based e-voting system prototype",
   "main": "index.html",
   "scripts": {
-    "test": "node --test test/**/*.test.js",
+    "test": "node --test",
     "start": "npx serve ."
   },
   "keywords": [
