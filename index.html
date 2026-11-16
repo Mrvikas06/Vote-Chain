@@ -229,6 +229,14 @@ function AuthScreen({onSuccess}){
                 placeholder="XXXX XXXX XXXX" style={{width:"100%",padding:"14px 16px",fontSize:18,letterSpacing:4}}/>
               {aadhaar.length===12&&voter&&<span style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",color:"#4ade80",fontSize:18}}>✓</span>}
             </div>
+            <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:12}}>
+              <span style={{fontSize:11,color:"var(--text3)",fontFamily:"var(--mono)"}}>Demo quick-fill:</span>
+              {Object.entries(VOTERS_DB).map(([num,v])=>(
+                <button key={num} type="button" className="demo-chip" onClick={()=>{setAadhaar(num);setError("");}}>
+                  {v.photo} {v.name.split(" ")[0]}
+                </button>
+              ))}
+            </div>
             {error&&<p style={{color:"var(--red)",fontSize:12,marginBottom:8,fontFamily:"var(--mono)"}}>{error}</p>}
             {aadhaar.length===12&&voter&&(
               <div className="card-inner" style={{padding:"12px 14px",marginBottom:12,display:"flex",gap:12,alignItems:"center",animation:"fadeUp 0.3s ease"}}>
