@@ -87,7 +87,7 @@ async function runFullInteractiveUITest() {
     console.log("   Biometric scan succeeded! Candidate screen loaded.");
 
     console.log("6. Selecting candidate and confirming...");
-    const firstCandidate = await page.$('div[style*="cursor: pointer"], div[style*="cursor:pointer"]');
+    const firstCandidate = await page.$('.candidate-card, div[style*="cursor: pointer"], div[style*="cursor:pointer"]');
     await firstCandidate.click();
     console.log("   Candidate selected.");
 
