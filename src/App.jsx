@@ -524,6 +524,16 @@ function AuthScreen({ onSuccess }) {
     };
   }, []);
 
+  // Autofocus first OTP digit on step transition
+  useEffect(() => {
+    if (step === 1) {
+      const t = setTimeout(() => {
+        inputRefs.current[0]?.focus();
+      }, 100);
+      return () => clearTimeout(t);
+    }
+  }, [step]);
+
   const safeTimeout = (fn, delay) => {
     const id = setTimeout(fn, delay);
     timersRef.current.push(id);
@@ -550,25 +560,79 @@ function AuthScreen({ onSuccess }) {
     safeTimeout(() => setStep(1), 1500);
   };
 
-  const handleOtpInput = (val, idx) => {
-    const d = [...otpDigits];
-    d[idx] = val.replace(/\D/, "").slice(-1);
-    setOtpDigits(d);
+  const handleResendOtp = () => {
+    const code = genOTP();
+    setOtpCode(code);
+    setOtpDigits(["", "", "", "", "", ""]);
     setError("");
-    if (val && idx < 5) inputRefs.current[idx + 1]?.focus();
+    addTerm(`New dynamic OTP dispatched: ${voter?.registeredPhone}`, "var(--accent)", 0);
+    setTimeout(() => {
+      inputRefs.current[0]?.focus();
+    }, 50);
+  };
+
+  const handleOtpInput = (val, idx) => {
+    setError("");
+    const cleaned = val.replace(/\D/g, "");
+    if (!cleaned) {
+      const d = [...otpDigits];
+      d[idx] = "";
+      setOtpDigits(d);
+      return;
+    }
+    const d = [...otpDigits];
+    if (cleaned.length > 1) {
+      for (let j = 0; j < cleaned.length && idx + j < 6; j++) {
+        d[idx + j] = cleaned[j];
+      }
+      setOtpDigits(d);
+      const nextIdx = Math.min(idx + cleaned.length, 5);
+      inputRefs.current[nextIdx]?.focus();
+      return;
+    }
+    d[idx] = cleaned;
+    setOtpDigits(d);
+    if (idx < 5) {
+      inputRefs.current[idx + 1]?.focus();
+    }
   };
 
   const handleOtpKey = (e, idx) => {
-    if (e.key === "Backspace" && !otpDigits[idx] && idx > 0) inputRefs.current[idx - 1]?.focus();
+    if (e.key === "Backspace") {
+      if (!otpDigits[idx] && idx > 0) {
+        e.preventDefault();
+        const d = [...otpDigits];
+        d[idx - 1] = "";
+        setOtpDigits(d);
+        inputRefs.current[idx - 1]?.focus();
+      }
+    } else if (e.key === "ArrowLeft" && idx > 0) {
+      e.preventDefault();
+      inputRefs.current[idx - 1]?.focus();
+    } else if (e.key === "ArrowRight" && idx < 5) {
+      e.preventDefault();
+      inputRefs.current[idx + 1]?.focus();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (otpDigits.join("").length === 6) {
+        handleOtpVerify();
+      }
+    }
   };
 
   const handleOtpPaste = e => {
-    const p = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-    if (p.length === 6) {
-      setOtpDigits(p.split(""));
-      inputRefs.current[5]?.focus();
-    }
     e.preventDefault();
+    const p = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (p) {
+      const d = [...otpDigits];
+      for (let i = 0; i < p.length && i < 6; i++) {
+        d[i] = p[i];
+      }
+      setOtpDigits(d);
+      setError("");
+      const nextIdx = Math.min(p.length, 5);
+      inputRefs.current[nextIdx]?.focus();
+    }
   };
 
   const handleOtpVerify = () => {
@@ -717,41 +781,57 @@ function AuthScreen({ onSuccess }) {
               ENTER 6-DIGIT VERIFICATION CODE
             </label>
 
-            <div style={{ display: "flex", gap: 8, marginBottom: 12 }} onPaste={handleOtpPaste}>
+            <div style={{ display: "flex", gap: 8, marginBottom: 16 }} onPaste={handleOtpPaste}>
               {otpDigits.map((d, i) => (
                 <input
                   key={i}
                   ref={el => inputRefs.current[i] = el}
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  autoComplete="one-time-code"
                   value={d}
+                  onFocus={e => e.target.select()}
                   onChange={e => handleOtpInput(e.target.value, i)}
                   onKeyDown={e => handleOtpKey(e, i)}
-                  style={{
-                    flex: 1,
-                    padding: "14px 0",
-                    textAlign: "center",
-                    fontSize: 20,
-                    fontWeight: 700,
-                    borderRadius: "var(--radius-sm)",
-                    border: `1px solid ${d ? "var(--accent)" : "var(--border)"}`,
-                    background: "rgba(9, 13, 20, 0.8)",
-                    color: "var(--text)"
-                  }}
-                  maxLength={1}
+                  className={`otp-input ${d ? "filled" : ""}`}
                 />
               ))}
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-              <span style={{ fontSize: 12, color: "var(--text-dim)", fontFamily: "var(--mono)" }}>
-                Demo Passcode:
-              </span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 12, color: "var(--text-dim)", fontFamily: "var(--mono)" }}>
+                  Demo Passcode:
+                </span>
+                <button
+                  type="button"
+                  className="demo-chip"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setOtpDigits(otpCode.split(""));
+                    setError("");
+                    inputRefs.current[5]?.focus();
+                  }}
+                >
+                  <span style={{ cursor: "pointer" }}>{otpCode} (click to fill)</span>
+                </button>
+              </div>
+
               <button
                 type="button"
-                className="demo-chip"
-                style={{ cursor: "pointer" }}
-                onClick={() => setOtpDigits(otpCode.split(""))}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "var(--accent)",
+                  fontSize: 12,
+                  fontFamily: "var(--mono)",
+                  cursor: "pointer",
+                  padding: "4px 8px"
+                }}
+                onClick={handleResendOtp}
               >
-                <span style={{ cursor: "pointer" }}>{otpCode} (click to fill)</span>
+                ↻ Resend OTP
               </button>
             </div>
 
