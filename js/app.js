@@ -1,4 +1,9 @@
 (function () {
+  /**
+   * VoteChain - Premium Web3 Electronic Voting System
+   * Modern, un-slopped, institutional-grade presentation layer
+   */
+
   const {
     useState,
     useEffect,
@@ -18,6 +23,195 @@
     recordVote,
     auditReceipt
   } = window.VoteChain || {};
+
+  // SVG Icons
+  function Icon({
+    name,
+    size = 16,
+    color = "currentColor"
+  }) {
+    const icons = {
+      vote: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("path", {
+        d: "m9 12 2 2 4-4"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M5 7c0-1.1.9-2 2-2h10a2 2 0 0 1 2 2v12H5V7Z"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M22 19H2"
+      })),
+      home: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("path", {
+        d: "m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+      }), /*#__PURE__*/React.createElement("polyline", {
+        points: "9 22 9 12 15 12 15 22"
+      })),
+      chart: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("path", {
+        d: "M18 20V10"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M12 20V4"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M6 20v-6"
+      })),
+      audit: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("circle", {
+        cx: "11",
+        cy: "11",
+        r: "8"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "m21 21-4.3-4.3"
+      })),
+      shield: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("path", {
+        d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+      })),
+      check: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2.5",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polyline", {
+        points: "20 6 9 17 4 12"
+      })),
+      copy: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("rect", {
+        width: "14",
+        height: "14",
+        x: "8",
+        y: "8",
+        rx: "2",
+        ry: "2"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"
+      })),
+      lock: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("rect", {
+        width: "18",
+        height: "11",
+        x: "3",
+        y: "11",
+        rx: "2",
+        ry: "2"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M7 11V7a5 5 0 0 1 10 0v4"
+      })),
+      blocks: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("rect", {
+        width: "8",
+        height: "8",
+        x: "2",
+        y: "2",
+        rx: "1"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "m14 6 4 4-4 4"
+      }), /*#__PURE__*/React.createElement("rect", {
+        width: "8",
+        height: "8",
+        x: "14",
+        y: "14",
+        rx: "1"
+      })),
+      user: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("circle", {
+        cx: "12",
+        cy: "8",
+        r: "5"
+      }), /*#__PURE__*/React.createElement("path", {
+        d: "M20 21a8 8 0 0 0-16 0"
+      })),
+      chevronDown: /*#__PURE__*/React.createElement("svg", {
+        width: size,
+        height: size,
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: color,
+        strokeWidth: "2",
+        strokeLinecap: "round",
+        strokeLinejoin: "round"
+      }, /*#__PURE__*/React.createElement("polyline", {
+        points: "6 9 12 15 18 9"
+      }))
+    };
+    return icons[name] || null;
+  }
+
+  // Top Status & Institutional Navigation Header
   function StatusBar({
     voter,
     onReset
@@ -27,101 +221,160 @@
       const t = setInterval(() => setTime(new Date()), 1000);
       return () => clearInterval(t);
     }, []);
-    return /*#__PURE__*/React.createElement("div", {
+    return /*#__PURE__*/React.createElement("header", {
       style: {
         position: "fixed",
         top: 0,
         left: 0,
         right: 0,
         zIndex: 100,
-        height: 52,
-        background: "rgba(3,7,15,0.95)",
-        backdropFilter: "blur(16px)",
+        height: 56,
+        background: "rgba(7, 9, 14, 0.8)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
         borderBottom: "1px solid var(--border)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 20px"
+        padding: "0 24px"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         alignItems: "center",
-        gap: 12
+        gap: 14
       }
-    }, /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 28,
+        height: 28,
+        borderRadius: "var(--radius-sm)",
+        background: "linear-gradient(135deg, #0284c7, #0369a1)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        boxShadow: "0 0 16px var(--accent-glow)"
+      }
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "shield",
+      size: 15,
+      color: "#fff"
+    })), /*#__PURE__*/React.createElement("span", {
       style: {
         fontFamily: "var(--font)",
         fontWeight: 800,
-        fontSize: 18,
-        background: "linear-gradient(90deg,#0ea5e9,#06b6d4)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent"
+        fontSize: 16,
+        letterSpacing: "-0.02em",
+        color: "var(--text)"
       }
-    }, "VoteChain"), /*#__PURE__*/React.createElement("span", {
+    }, "VOTE", /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: "var(--accent)"
+      }
+    }, "CHAIN"))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "none"
+      },
+      className: "node-tag"
+    }, /*#__PURE__*/React.createElement("span", {
       className: "tag",
       style: {
-        background: "#0c2a0c",
-        border: "1px solid #14532d",
-        color: "#4ade80"
+        background: "rgba(16, 185, 129, 0.1)",
+        border: "1px solid rgba(16, 185, 129, 0.2)",
+        color: "#34d399"
       }
     }, /*#__PURE__*/React.createElement("span", {
       className: "status-dot",
       style: {
-        background: "#4ade80"
+        background: "#10b981"
       }
-    }), "LIVE"), /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontSize: 11,
-        color: "var(--text3)",
-        fontFamily: "var(--mono)",
-        display: "none"
-      }
-    }, "Hyperledger Fabric v2.5")), /*#__PURE__*/React.createElement("div", {
+    }), "RAFT SYNC"))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         alignItems: "center",
-        gap: 12
+        gap: 14
       }
     }, voter && /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         alignItems: "center",
-        gap: 6
+        gap: 8,
+        background: "rgba(255, 255, 255, 0.04)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--radius-full)",
+        padding: "3px 12px 3px 6px"
       }
-    }, /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 22,
+        height: 22,
+        borderRadius: "50%",
+        background: "rgba(14, 165, 233, 0.2)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 10,
+        fontWeight: 700,
+        color: "var(--accent)"
+      }
+    }, voter.name.charAt(0)), /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 12,
-        color: "var(--text2)",
-        fontFamily: "var(--mono)"
+        color: "var(--text)",
+        fontWeight: 500
       }
-    }, "\uD83D\uDC64 ", voter.name.split(" ")[0]), /*#__PURE__*/React.createElement("button", {
+    }, voter.name.split(" ")[0]), /*#__PURE__*/React.createElement("button", {
       onClick: onReset,
+      title: "Logout session",
       style: {
-        background: "var(--bg3)",
-        border: "1px solid var(--border2)",
-        color: "var(--text3)",
-        borderRadius: 6,
-        padding: "2px 8px",
-        fontSize: 10,
+        background: "transparent",
+        border: "none",
+        color: "var(--text-dim)",
         cursor: "pointer",
-        fontFamily: "var(--mono)"
-      }
-    }, "Logout")), /*#__PURE__*/React.createElement("span", {
+        padding: "2px 4px",
+        fontSize: 10,
+        fontFamily: "var(--mono)",
+        transition: "color 0.2s"
+      },
+      onMouseEnter: e => e.currentTarget.style.color = "var(--red)",
+      onMouseLeave: e => e.currentTarget.style.color = "var(--text-dim)"
+    }, "Exit")), /*#__PURE__*/React.createElement("div", {
       style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
         fontSize: 11,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         fontFamily: "var(--mono)"
       }
-    }, time.toLocaleTimeString("en-IN")), /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "status-dot",
+      style: {
+        background: "#10b981"
+      }
+    }), /*#__PURE__*/React.createElement("span", null, time.toLocaleTimeString("en-IN", {
+      hour12: false
+    }), " IST")), /*#__PURE__*/React.createElement("span", {
       className: "tag",
       style: {
-        background: "var(--bg3)",
-        border: "1px solid var(--border2)",
-        color: "var(--text2)"
+        background: "rgba(255, 255, 255, 0.03)",
+        border: "1px solid var(--border)",
+        color: "var(--text-muted)"
       }
-    }, "\uD83D\uDD12 TLS 1.3")));
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "lock",
+      size: 11,
+      color: "var(--accent)"
+    }), "TLS 1.3")));
   }
+
+  // Progress Stepper Component
   function ProgressStepper({
     steps,
     current
@@ -130,79 +383,91 @@
       style: {
         display: "flex",
         alignItems: "center",
-        marginBottom: 28
+        marginBottom: 32,
+        gap: 8
       }
-    }, steps.map((s, i) => /*#__PURE__*/React.createElement("div", {
-      key: s,
-      style: {
-        display: "flex",
-        alignItems: "center",
-        flex: i < steps.length - 1 ? 1 : "auto"
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 4,
-        minWidth: 72
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        width: 32,
-        height: 32,
-        borderRadius: "50%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 13,
-        fontWeight: 700,
-        transition: "all 0.3s",
-        background: i < current ? "var(--green)" : i === current ? "var(--accent)" : "var(--bg3)",
-        border: `2px solid ${i < current ? "var(--green)" : i === current ? "var(--accent)" : "var(--border2)"}`,
-        color: i <= current ? "#fff" : "var(--text3)",
-        boxShadow: i === current ? "0 0 16px rgba(14,165,233,0.4)" : "none"
-      }
-    }, i < current ? "✓" : i + 1), /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontSize: 10,
-        color: i === current ? "var(--accent)" : i < current ? "var(--green)" : "var(--text3)",
-        fontFamily: "var(--font)",
-        fontWeight: 600,
-        whiteSpace: "nowrap"
-      }
-    }, s)), i < steps.length - 1 && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1,
-        height: 2,
-        background: i < current ? "var(--green)" : "var(--border)",
-        margin: "0 4px",
-        marginBottom: 20,
-        transition: "background 0.3s"
-      }
-    }))));
+    }, steps.map((s, i) => {
+      const isDone = i < current;
+      const isCurrent = i === current;
+      return /*#__PURE__*/React.createElement("div", {
+        key: s,
+        style: {
+          display: "flex",
+          alignItems: "center",
+          flex: i < steps.length - 1 ? 1 : "initial"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          padding: "6px 12px",
+          borderRadius: "var(--radius-full)",
+          background: isCurrent ? "rgba(14, 165, 233, 0.12)" : isDone ? "rgba(16, 185, 129, 0.1)" : "rgba(255, 255, 255, 0.03)",
+          border: `1px solid ${isCurrent ? "var(--accent)" : isDone ? "var(--green)" : "var(--border)"}`,
+          transition: "all 0.3s ease"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          width: 18,
+          height: 18,
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 10,
+          fontWeight: 700,
+          background: isCurrent ? "var(--accent)" : isDone ? "var(--green)" : "transparent",
+          color: isCurrent || isDone ? "#fff" : "var(--text-dim)"
+        }
+      }, isDone ? /*#__PURE__*/React.createElement(Icon, {
+        name: "check",
+        size: 10,
+        color: "#fff"
+      }) : i + 1), /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 12,
+          fontWeight: isCurrent ? 600 : 500,
+          color: isCurrent ? "var(--text)" : isDone ? "var(--text-muted)" : "var(--text-dim)",
+          whiteSpace: "nowrap"
+        }
+      }, s)), i < steps.length - 1 && /*#__PURE__*/React.createElement("div", {
+        style: {
+          flex: 1,
+          height: 1,
+          background: isDone ? "var(--green)" : "var(--border)",
+          margin: "0 8px",
+          transition: "background 0.3s ease"
+        }
+      }));
+    }));
   }
+
+  // Terminal Output Line
   function TerminalLine({
     text,
-    color = "var(--text2)"
+    color = "var(--text-muted)"
   }) {
     return /*#__PURE__*/React.createElement("div", {
       style: {
-        animation: "fadeUp 0.3s ease both",
+        animation: "fadeUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) both",
         fontFamily: "var(--mono)",
         fontSize: 12,
         color,
-        padding: "2px 0",
+        padding: "3px 0",
         display: "flex",
         alignItems: "center",
-        gap: 8
+        gap: 10
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
-        color: "var(--text3)"
+        color: "var(--text-dim)",
+        userSelect: "none"
       }
-    }, "\u203A"), text);
+    }, "\u203A"), /*#__PURE__*/React.createElement("span", null, text));
   }
+
+  // Landing Screen
   function LandingScreen({
     onNavigate,
     candidates,
@@ -214,69 +479,62 @@
     return /*#__PURE__*/React.createElement("div", {
       style: {
         minHeight: "100vh",
-        paddingTop: 52,
-        background: "var(--bg)",
-        position: "relative",
-        overflow: "hidden"
+        paddingTop: 56,
+        paddingBottom: 80,
+        position: "relative"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        position: "absolute",
-        inset: 0,
-        backgroundImage: "linear-gradient(rgba(14,165,233,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(14,165,233,0.04) 1px,transparent 1px)",
-        backgroundSize: "40px 40px"
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      style: {
-        position: "relative",
-        zIndex: 1,
-        maxWidth: 960,
+        maxWidth: 1080,
         margin: "0 auto",
-        padding: "48px 20px"
+        padding: "48px 24px"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         textAlign: "center",
-        marginBottom: 48,
-        animation: "fadeUp 0.6s ease both"
+        marginBottom: 56,
+        animation: "fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)"
       }
     }, /*#__PURE__*/React.createElement("div", {
       className: "tag",
       style: {
-        background: "#0c2031",
-        border: "1px solid var(--border2)",
-        color: "var(--accent)",
-        marginBottom: 20,
-        fontSize: 12
+        background: "rgba(14, 165, 233, 0.08)",
+        border: "1px solid rgba(14, 165, 233, 0.25)",
+        color: "var(--accent-hover)",
+        marginBottom: 20
       }
-    }, "\uD83C\uDDEE\uD83C\uDDF3 India General Election 2026 \xB7 Constituency Voting Portal"), /*#__PURE__*/React.createElement("h1", {
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "status-dot",
       style: {
-        fontFamily: "var(--font)",
+        background: "var(--accent)"
+      }
+    }), "GENERAL ELECTION 2026 \xB7 DIGITAL VOTING PROTOCOL"), /*#__PURE__*/React.createElement("h1", {
+      style: {
+        fontSize: "clamp(36px, 6vw, 64px)",
         fontWeight: 800,
-        fontSize: "clamp(38px,7vw,76px)",
-        lineHeight: 1.05,
-        letterSpacing: -2,
-        marginBottom: 16,
+        lineHeight: 1.1,
+        letterSpacing: "-0.03em",
+        marginBottom: 18,
         color: "var(--text)"
       }
-    }, "Secure. Transparent.", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    }, "The Sovereign Electronic Ballot.", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
       style: {
-        background: "linear-gradient(90deg,#0ea5e9,#06b6d4,#10b981)",
+        background: "linear-gradient(90deg, #38bdf8 0%, #10b981 100%)",
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent"
       }
-    }, "Democratic.")), /*#__PURE__*/React.createElement("p", {
+    }, "Cryptographically Sealed.")), /*#__PURE__*/React.createElement("p", {
       style: {
-        fontSize: 15,
-        color: "var(--text2)",
-        maxWidth: 500,
-        margin: "0 auto 32px",
-        lineHeight: 1.8
+        fontSize: 16,
+        color: "var(--text-muted)",
+        maxWidth: 620,
+        margin: "0 auto 36px",
+        lineHeight: 1.7
       }
-    }, "Blockchain-secured e-voting powered by Hyperledger Fabric. Every vote is immutable, anonymous via zk-SNARKs, and publicly verifiable."), /*#__PURE__*/React.createElement("div", {
+    }, "Decentralized e-voting secured with Byzantine Fault-Tolerant Raft consensus and zero-knowledge privacy. Every citizen ballot is tamper-proof and publicly verifiable."), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
-        gap: 12,
+        gap: 14,
         justifyContent: "center",
         flexWrap: "wrap"
       }
@@ -285,107 +543,146 @@
       onClick: () => onNavigate("auth"),
       style: {
         padding: "14px 32px",
-        fontSize: 15
+        fontSize: 14,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8
       }
-    }, "\uD83D\uDDF3\uFE0F Cast Your Vote"), /*#__PURE__*/React.createElement("button", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "vote",
+      size: 16,
+      color: "#fff"
+    }), "Cast Your Ballot"), /*#__PURE__*/React.createElement("button", {
       className: "btn-ghost",
       onClick: () => onNavigate("audit"),
       style: {
-        padding: "14px 22px",
-        fontSize: 15
+        padding: "14px 24px",
+        fontSize: 14,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8
       }
-    }, "\uD83D\uDD0D Verify Receipt"), /*#__PURE__*/React.createElement("button", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "audit",
+      size: 16
+    }), "Verify Receipt"), /*#__PURE__*/React.createElement("button", {
       className: "btn-ghost",
       onClick: () => onNavigate("results"),
       style: {
-        padding: "14px 22px",
-        fontSize: 15
+        padding: "14px 24px",
+        fontSize: 14,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8
       }
-    }, "\uD83D\uDCCA Live Results"))), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "chart",
+      size: 16
+    }), "Live Telemetry"))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
-        gap: 12,
-        marginBottom: 36
+        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: 16,
+        marginBottom: 40
       }
     }, [{
-      label: "Eligible Voters",
+      label: "Registered Electorate",
       value: "97.2 Cr",
-      icon: "👥",
-      color: "#0ea5e9"
+      icon: "user",
+      color: "var(--accent)"
     }, {
-      label: "Votes Cast",
+      label: "Ballots Recorded",
       value: fmtNum(total),
-      icon: "🗳️",
-      color: "#10b981"
+      icon: "vote",
+      color: "var(--green)"
     }, {
-      label: "Blocks Confirmed",
+      label: "Ledger Height",
       value: fmtNum(449821 + Math.max(0, logs.length - INITIAL_BLOCKCHAIN.length)),
-      icon: "⛓️",
-      color: "#a78bfa"
+      icon: "blocks",
+      color: "var(--purple)"
     }, {
-      label: "Turnout",
+      label: "Electoral Turnout",
       value: (total / 1028300 * 100).toFixed(1) + "%",
-      icon: "📈",
-      color: "#f59e0b"
-    }].map(s => /*#__PURE__*/React.createElement("div", {
+      icon: "chart",
+      color: "var(--amber)"
+    }].map((s, idx) => /*#__PURE__*/React.createElement("div", {
       key: s.label,
       className: "card",
       style: {
-        padding: "16px 18px"
+        padding: "20px 22px"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 20,
-        marginBottom: 6
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 12
       }
-    }, s.icon), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
-        fontSize: 20,
+        fontSize: 12,
+        fontWeight: 500,
+        color: "var(--text-muted)"
+      }
+    }, s.label), /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 30,
+        height: 30,
+        borderRadius: "var(--radius-sm)",
+        background: "rgba(255, 255, 255, 0.04)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: s.color
+      }
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: s.icon,
+      size: 15,
+      color: s.color
+    }))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: "var(--mono)",
+        fontWeight: 700,
+        fontSize: 24,
         color: s.color,
-        marginBottom: 2
+        letterSpacing: "-0.02em"
       }
-    }, s.value), /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 11,
-        color: "var(--text3)"
-      }
-    }, s.label)))), /*#__PURE__*/React.createElement("div", {
+    }, s.value)))), /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
-        padding: 0,
         overflow: "hidden"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        padding: "12px 18px",
+        padding: "16px 22px",
         borderBottom: "1px solid var(--border)",
         display: "flex",
         alignItems: "center",
-        gap: 8
+        justifyContent: "space-between"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10
       }
     }, /*#__PURE__*/React.createElement("span", {
       className: "status-dot",
       style: {
-        background: "#4ade80"
+        background: "var(--green)"
       }
     }), /*#__PURE__*/React.createElement("span", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 700,
-        fontSize: 14,
-        color: "var(--text)"
+        fontWeight: 600,
+        fontSize: 14
       }
-    }, "Live Blockchain Feed"), /*#__PURE__*/React.createElement("span", {
+    }, "Live Consensus Ledger")), /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
-        fontFamily: "var(--mono)",
-        marginLeft: "auto"
+        color: "var(--text-dim)",
+        fontFamily: "var(--mono)"
       }
-    }, "Hyperledger Fabric \xB7 Raft Consensus")), /*#__PURE__*/React.createElement("div", {
+    }, "Hyperledger Fabric \xB7 Raft Protocol")), /*#__PURE__*/React.createElement("div", {
       style: {
         overflowX: "auto"
       }
@@ -398,79 +695,127 @@
       }
     }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
       style: {
-        borderBottom: "1px solid var(--border)"
+        borderBottom: "1px solid var(--border)",
+        background: "rgba(255, 255, 255, 0.02)"
       }
-    }, ["Block", "Hash", "Transactions", "Time", "Status", "Action"].map(h => /*#__PURE__*/React.createElement("th", {
+    }, ["Block Height", "Transaction Hash", "Transactions", "Time", "Consensus", "Audit"].map(h => /*#__PURE__*/React.createElement("th", {
       key: h,
       style: {
-        padding: "10px 14px",
+        padding: "12px 18px",
         textAlign: "left",
-        color: "var(--text3)",
-        fontWeight: 500
+        color: "var(--text-dim)",
+        fontWeight: 500,
+        fontSize: 11
       }
-    }, h)))), /*#__PURE__*/React.createElement("tbody", null, logs.map((b, i) => {
-      const shortHash = b.hash.length > 18 ? b.hash.slice(0, 6) + "..." + b.hash.slice(-4) : b.hash;
+    }, h)))), /*#__PURE__*/React.createElement("tbody", null, logs.map(b => {
+      const shortHash = b.hash.length > 18 ? `${b.hash.slice(0, 6)}...${b.hash.slice(-4)}` : b.hash;
       return /*#__PURE__*/React.createElement("tr", {
         key: b.block,
         style: {
           borderBottom: "1px solid var(--border)",
-          animation: `chainAdd 0.4s ${i * 0.1}s ease both`
-        }
+          transition: "background 0.2s"
+        },
+        className: "table-row"
       }, /*#__PURE__*/React.createElement("td", {
         style: {
-          padding: "11px 14px",
+          padding: "14px 18px",
           color: "var(--accent)",
-          fontWeight: 700
+          fontWeight: 600
         }
       }, b.block), /*#__PURE__*/React.createElement("td", {
         style: {
-          padding: "11px 14px",
-          color: "var(--text2)"
+          padding: "14px 18px",
+          color: "var(--text-muted)"
         },
         title: b.fullHash || b.hash
       }, shortHash), /*#__PURE__*/React.createElement("td", {
         style: {
-          padding: "11px 14px",
+          padding: "14px 18px",
           color: "var(--text)"
         }
       }, fmtNum(b.tx)), /*#__PURE__*/React.createElement("td", {
         style: {
-          padding: "11px 14px",
-          color: "var(--text3)"
+          padding: "14px 18px",
+          color: "var(--text-dim)"
         }
       }, b.time), /*#__PURE__*/React.createElement("td", {
         style: {
-          padding: "11px 14px"
+          padding: "14px 18px"
         }
       }, /*#__PURE__*/React.createElement("span", {
         className: "tag",
         style: {
-          background: "#0c2a0c",
-          border: "1px solid #14532d",
-          color: "#4ade80"
+          background: "rgba(16, 185, 129, 0.08)",
+          border: "1px solid rgba(16, 185, 129, 0.25)",
+          color: "#34d399"
         }
-      }, "\u2713 ", b.status)), /*#__PURE__*/React.createElement("td", {
+      }, /*#__PURE__*/React.createElement(Icon, {
+        name: "check",
+        size: 10,
+        color: "#10b981"
+      }), b.status)), /*#__PURE__*/React.createElement("td", {
         style: {
-          padding: "11px 14px"
+          padding: "14px 18px"
         }
       }, /*#__PURE__*/React.createElement("button", {
         className: "demo-chip",
         onClick: () => onNavigate("audit", b.fullHash || b.hash),
         style: {
-          padding: "2px 8px",
-          fontSize: 10
+          padding: "4px 10px",
+          fontSize: 11
         }
-      }, "Audit")));
-    }))))), /*#__PURE__*/React.createElement("p", {
+      }, "Verify")));
+    }))))), /*#__PURE__*/React.createElement("div", {
       style: {
-        textAlign: "center",
-        marginTop: 16,
-        fontSize: 12,
-        color: "var(--text3)",
-        fontFamily: "var(--mono)"
+        marginTop: 24,
+        padding: "14px 18px",
+        background: "rgba(255, 255, 255, 0.02)",
+        borderRadius: "var(--radius-md)",
+        border: "1px solid var(--border)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: 12
       }
-    }, "Demo: 123456789012 \xB7 987654321098 \xB7 456789012345")));
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8
+      }
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "user",
+      size: 14,
+      color: "var(--text-dim)"
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        color: "var(--text-muted)"
+      }
+    }, "Demo Verified Elector Identities:")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 8,
+        flexWrap: "wrap"
+      }
+    }, Object.entries(VOTERS_DB).map(([num, v]) => /*#__PURE__*/React.createElement("span", {
+      key: num,
+      className: "tag",
+      style: {
+        background: "var(--surface-3)",
+        color: "var(--text)",
+        border: "1px solid var(--border)"
+      }
+    }, v.name.split(" ")[0], ": ", /*#__PURE__*/React.createElement("strong", {
+      style: {
+        fontFamily: "var(--mono)",
+        color: "var(--accent)"
+      }
+    }, num)))))));
   }
+
+  // Authentication Screen
   function AuthScreen({
     onSuccess
   }) {
@@ -497,7 +842,7 @@
       timersRef.current.push(id);
       return id;
     };
-    const addTerm = (txt, color = "var(--text2)", delay = 0) => {
+    const addTerm = (txt, color = "var(--text-muted)", delay = 0) => {
       safeTimeout(() => setTermLines(l => [...l, {
         txt,
         color,
@@ -506,17 +851,17 @@
     };
     const handleAadhaar = () => {
       if (!voter) {
-        setError("Aadhaar not found. Try: 123456789012");
+        setError("Aadhaar ID not found in electoral registry. Please select a demo elector.");
         return;
       }
       setError("");
       const code = genOTP();
       setOtpCode(code);
       setTermLines([]);
-      addTerm("› Connecting to UIDAI server…", undefined, 0);
-      addTerm("› Aadhaar validated ✓", "#4ade80", 400);
-      addTerm(`› OTP dispatched to ${voter.registeredPhone}`, "#0ea5e9", 800);
-      addTerm("› Session token generated (SHA-256)", "var(--text2)", 1200);
+      addTerm("Establishing secure handshake with UIDAI registry node...", undefined, 0);
+      addTerm("Elector biometric identity confirmed in district database ✓", "#34d399", 400);
+      addTerm(`Dynamic OTP dispatched to registered mobile: ${voter.registeredPhone}`, "var(--accent)", 800);
+      addTerm("Session authorization token issued (SHA-256)", "var(--text-muted)", 1200);
       safeTimeout(() => setStep(1), 1500);
     };
     const handleOtpInput = (val, idx) => {
@@ -540,13 +885,13 @@
     const handleOtpVerify = () => {
       const entered = otpDigits.join("");
       if (entered !== otpCode) {
-        setError(`Invalid OTP. Hint: ${otpCode}`);
+        setError(`Invalid OTP code entered. Hint: ${otpCode}`);
         return;
       }
       setError("");
       setTermLines([]);
-      addTerm("› OTP verified ✓", "#4ade80", 0);
-      addTerm("› Initiating DeepFace biometric scan…", undefined, 400);
+      addTerm("Dynamic OTP authenticated successfully ✓", "#34d399", 0);
+      addTerm("Initiating DeepFace biometric liveness inspection...", undefined, 400);
       safeTimeout(() => {
         setStep(2);
         startFace();
@@ -554,8 +899,8 @@
     };
     const startFace = () => {
       let p = 0;
-      const msgs = ["Detecting face landmarks…", "Cross-checking Aadhaar biometric DB…", "Anti-spoofing liveness check…", "Identity confirmed ✓"];
-      msgs.forEach((m, i) => addTerm("› " + m, i === 3 ? "#4ade80" : "var(--text2)", i * 700));
+      const msgs = ["Extracting 468 facial landmark coordinates...", "Matching feature vectors against Aadhaar cryptographic root...", "Executing anti-spoofing micro-movement liveness test...", "Biometric signature authenticated ✓"];
+      msgs.forEach((m, i) => addTerm(m, i === 3 ? "#34d399" : "var(--text-muted)", i * 700));
       intervalRef.current = setInterval(() => {
         p += Math.random() * 6 + 3;
         setFaceProgress(Math.min(p, 100));
@@ -570,17 +915,17 @@
     return /*#__PURE__*/React.createElement("div", {
       style: {
         minHeight: "100vh",
-        paddingTop: 52,
+        paddingTop: 80,
+        paddingBottom: 80,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "72px 20px 24px",
-        background: "var(--bg)"
+        padding: "80px 20px"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         width: "100%",
-        maxWidth: 500
+        maxWidth: 480
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
@@ -589,74 +934,76 @@
       }
     }, /*#__PURE__*/React.createElement("h2", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
-        fontSize: 26,
+        fontSize: 24,
+        fontWeight: 700,
         color: "var(--text)",
         marginBottom: 6
       }
-    }, "Voter Authentication"), /*#__PURE__*/React.createElement("p", {
+    }, "Elector Authentication"), /*#__PURE__*/React.createElement("p", {
       style: {
-        color: "var(--text3)",
+        color: "var(--text-muted)",
         fontSize: 13
       }
-    }, "2-Factor \xB7 Aadhaar + OTP + DeepFace Biometric")), /*#__PURE__*/React.createElement(ProgressStepper, {
-      steps: ["Aadhaar", "OTP", "Biometric"],
+    }, "Two-Factor Registry Lookup & Biometric Verification")), /*#__PURE__*/React.createElement(ProgressStepper, {
+      steps: ["Registry ID", "OTP Passcode", "Biometric"],
       current: step
     }), step === 0 && /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
-        padding: 24,
-        animation: "fadeUp 0.4s ease both"
+        padding: 28,
+        animation: "fadeUp 0.3s ease"
       }
     }, /*#__PURE__*/React.createElement("label", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         fontFamily: "var(--mono)",
         display: "block",
         marginBottom: 8,
-        letterSpacing: 1
+        letterSpacing: "0.05em"
       }
-    }, "AADHAAR NUMBER"), /*#__PURE__*/React.createElement("div", {
+    }, "12-DIGIT AADHAAR NUMBER"), /*#__PURE__*/React.createElement("div", {
       style: {
         position: "relative",
-        marginBottom: 8
+        marginBottom: 12
       }
     }, /*#__PURE__*/React.createElement("input", {
       value: aadhaar.replace(/(\d{4})(?=\d)/g, "$1 "),
       onChange: e => setAadhaar(e.target.value.replace(/\s|\D/g, "").slice(0, 12)),
-      placeholder: "XXXX XXXX XXXX",
+      placeholder: "0000 0000 0000",
       style: {
         width: "100%",
         padding: "14px 16px",
         fontSize: 18,
-        letterSpacing: 4
+        letterSpacing: 3,
+        fontWeight: 600
       }
     }), aadhaar.length === 12 && voter && /*#__PURE__*/React.createElement("span", {
       style: {
         position: "absolute",
-        right: 12,
+        right: 14,
         top: "50%",
         transform: "translateY(-50%)",
-        color: "#4ade80",
-        fontSize: 18
+        color: "var(--green)"
       }
-    }, "\u2713")), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "check",
+      size: 18,
+      color: "#10b981"
+    }))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         alignItems: "center",
         gap: 6,
         flexWrap: "wrap",
-        marginBottom: 12
+        marginBottom: 16
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
-        fontFamily: "var(--mono)"
+        color: "var(--text-dim)"
       }
-    }, "Demo quick-fill:"), Object.entries(VOTERS_DB).map(([num, v]) => /*#__PURE__*/React.createElement("button", {
+    }, "Demo quick-select:"), Object.entries(VOTERS_DB).map(([num, v]) => /*#__PURE__*/React.createElement("button", {
       key: num,
       type: "button",
       className: "demo-chip",
@@ -664,62 +1011,76 @@
         setAadhaar(num);
         setError("");
       }
-    }, v.photo, " ", v.name.split(" ")[0]))), error && /*#__PURE__*/React.createElement("p", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "user",
+      size: 11
+    }), v.name.split(" ")[0]))), error && /*#__PURE__*/React.createElement("p", {
       style: {
         color: "var(--red)",
         fontSize: 12,
-        marginBottom: 8,
+        marginBottom: 12,
         fontFamily: "var(--mono)"
       }
     }, error), aadhaar.length === 12 && voter && /*#__PURE__*/React.createElement("div", {
       className: "card-inner",
       style: {
-        padding: "12px 14px",
-        marginBottom: 12,
+        padding: "14px 16px",
+        marginBottom: 18,
         display: "flex",
-        gap: 12,
+        gap: 14,
         alignItems: "center",
-        animation: "fadeUp 0.3s ease"
+        animation: "fadeUp 0.2s ease"
       }
-    }, /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 26
-      }
-    }, voter.photo), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-      style: {
-        fontFamily: "var(--font)",
+        width: 36,
+        height: 36,
+        borderRadius: "50%",
+        background: "rgba(14, 165, 233, 0.2)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 14,
         fontWeight: 700,
+        color: "var(--accent)"
+      }
+    }, voter.name.charAt(0)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }, /*#__PURE__*/React.createElement("p", {
+      style: {
+        fontWeight: 600,
         color: "var(--text)",
         fontSize: 14
       }
     }, voter.name), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 12,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         marginTop: 2
       }
     }, voter.constituency)), /*#__PURE__*/React.createElement("span", {
       className: "tag",
       style: {
-        background: "#0c2a0c",
-        border: "1px solid #14532d",
-        color: "#4ade80",
-        marginLeft: "auto"
+        background: "rgba(16, 185, 129, 0.1)",
+        border: "1px solid rgba(16, 185, 129, 0.3)",
+        color: "#34d399"
       }
-    }, "Found")), /*#__PURE__*/React.createElement("button", {
+    }, "Verified")), /*#__PURE__*/React.createElement("button", {
       className: "btn-primary",
       style: {
         width: "100%",
-        padding: 13,
+        padding: 14,
         fontSize: 14
       },
       disabled: aadhaar.length !== 12 || !voter,
       onClick: handleAadhaar
-    }, "VERIFY & SEND OTP \u2192"), termLines.length > 0 && /*#__PURE__*/React.createElement("div", {
+    }, "Verify Identity & Dispatch OTP \u2192"), termLines.length > 0 && /*#__PURE__*/React.createElement("div", {
       className: "card-inner",
       style: {
         padding: "12px 14px",
-        marginTop: 12
+        marginTop: 14
       }
     }, termLines.map(l => /*#__PURE__*/React.createElement(TerminalLine, {
       key: l.id,
@@ -728,41 +1089,45 @@
     })))), step === 1 && /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
-        padding: 24,
-        animation: "fadeUp 0.4s ease both"
+        padding: 28,
+        animation: "fadeUp 0.3s ease"
       }
     }, /*#__PURE__*/React.createElement("div", {
       className: "card-inner",
       style: {
-        padding: "10px 14px",
-        marginBottom: 18,
+        padding: "12px 16px",
+        marginBottom: 20,
         display: "flex",
-        gap: 8,
+        gap: 10,
         alignItems: "center"
       }
-    }, /*#__PURE__*/React.createElement("span", null, "\uD83D\uDCF1"), /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "lock",
+      size: 16,
+      color: "var(--accent)"
+    }), /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 13,
-        color: "var(--text2)"
+        color: "var(--text-muted)"
       }
-    }, "OTP sent to ", /*#__PURE__*/React.createElement("strong", {
+    }, "Passcode dispatched to ", /*#__PURE__*/React.createElement("strong", {
       style: {
         color: "var(--accent)"
       }
     }, voter?.registeredPhone))), /*#__PURE__*/React.createElement("label", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         fontFamily: "var(--mono)",
         display: "block",
-        marginBottom: 10,
-        letterSpacing: 1
+        marginBottom: 12,
+        letterSpacing: "0.05em"
       }
-    }, "ENTER 6-DIGIT OTP"), /*#__PURE__*/React.createElement("div", {
+    }, "ENTER 6-DIGIT VERIFICATION CODE"), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         gap: 8,
-        marginBottom: 8
+        marginBottom: 12
       },
       onPaste: handleOtpPaste
     }, otpDigits.map((d, i) => /*#__PURE__*/React.createElement("input", {
@@ -773,47 +1138,57 @@
       onKeyDown: e => handleOtpKey(e, i),
       style: {
         flex: 1,
-        padding: "13px 0",
+        padding: "14px 0",
         textAlign: "center",
         fontSize: 20,
         fontWeight: 700,
-        borderRadius: 10,
-        border: `2px solid ${d ? "var(--accent)" : "var(--border)"}`,
-        background: "var(--bg1)",
+        borderRadius: "var(--radius-sm)",
+        border: `1px solid ${d ? "var(--accent)" : "var(--border)"}`,
+        background: "rgba(9, 13, 20, 0.8)",
         color: "var(--text)"
       },
       maxLength: 1
-    }))), /*#__PURE__*/React.createElement("p", {
+    }))), /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 11,
-        color: "var(--text3)",
-        fontFamily: "var(--mono)",
-        marginBottom: 10
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 16
       }
-    }, "\uD83D\uDCA1 Demo OTP: ", /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       style: {
-        color: "var(--accent)",
-        cursor: "pointer",
-        textDecoration: "underline"
+        fontSize: 12,
+        color: "var(--text-dim)",
+        fontFamily: "var(--mono)"
+      }
+    }, "Demo Passcode:"), /*#__PURE__*/React.createElement("button", {
+      type: "button",
+      className: "demo-chip",
+      style: {
+        cursor: "pointer"
       },
       onClick: () => setOtpDigits(otpCode.split(""))
-    }, otpCode, " (click to fill)")), error && /*#__PURE__*/React.createElement("p", {
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        cursor: "pointer"
+      }
+    }, otpCode, " (click to fill)"))), error && /*#__PURE__*/React.createElement("p", {
       style: {
         color: "var(--red)",
         fontSize: 12,
-        marginBottom: 8,
+        marginBottom: 12,
         fontFamily: "var(--mono)"
       }
     }, error), /*#__PURE__*/React.createElement("button", {
       className: "btn-primary",
       style: {
         width: "100%",
-        padding: 13,
+        padding: 14,
         fontSize: 14
       },
       disabled: otpDigits.join("").length !== 6,
       onClick: handleOtpVerify
-    }, "VERIFY OTP \u2192"), /*#__PURE__*/React.createElement("button", {
+    }, "Verify Passcode \u2192"), /*#__PURE__*/React.createElement("button", {
       className: "btn-ghost",
       style: {
         width: "100%",
@@ -826,11 +1201,11 @@
         setOtpDigits(["", "", "", "", "", ""]);
         setTermLines([]);
       }
-    }, "\u2190 Back"), termLines.length > 0 && /*#__PURE__*/React.createElement("div", {
+    }, "\u2190 Back to Registry Lookup"), termLines.length > 0 && /*#__PURE__*/React.createElement("div", {
       className: "card-inner",
       style: {
         padding: "12px 14px",
-        marginTop: 12
+        marginTop: 14
       }
     }, termLines.map(l => /*#__PURE__*/React.createElement(TerminalLine, {
       key: l.id,
@@ -839,60 +1214,73 @@
     })))), step === 2 && /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
-        padding: 24,
+        padding: 32,
         textAlign: "center",
-        animation: "fadeUp 0.4s ease both"
+        animation: "fadeUp 0.3s ease"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         position: "relative",
-        width: 130,
-        height: 130,
-        margin: "0 auto 16px",
+        width: 140,
+        height: 140,
+        margin: "0 auto 20px",
         borderRadius: "50%",
-        background: "var(--bg3)",
-        border: `3px solid ${faceDone ? "var(--green)" : "var(--accent)"}`,
+        background: "rgba(10, 15, 24, 0.8)",
+        border: `2px solid ${faceDone ? "var(--green)" : "var(--accent)"}`,
         overflow: "hidden",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        boxShadow: faceDone ? "0 0 30px var(--green-glow)" : "0 0 30px var(--accent-glow)"
       }
-    }, /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 58
+        width: 72,
+        height: 72,
+        borderRadius: "50%",
+        background: "rgba(255, 255, 255, 0.05)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 28,
+        fontWeight: 700,
+        color: faceDone ? "var(--green)" : "var(--accent)"
       }
-    }, voter?.photo), !faceDone && /*#__PURE__*/React.createElement("div", {
+    }, voter?.name.charAt(0)), !faceDone && /*#__PURE__*/React.createElement("div", {
       style: {
         position: "absolute",
         top: 0,
         left: 0,
         right: 0,
-        height: "3px",
+        height: 2,
         background: "var(--accent)",
-        animation: "scanline 1.5s linear infinite"
+        boxShadow: "0 0 10px var(--accent)",
+        animation: "scanBeam 1.8s infinite ease-in-out"
       }
     }), faceDone && /*#__PURE__*/React.createElement("div", {
       style: {
         position: "absolute",
         inset: 0,
-        background: "rgba(16,185,129,0.2)",
+        background: "rgba(16, 185, 129, 0.15)",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center",
-        fontSize: 36
+        justifyContent: "center"
       }
-    }, "\u2713")), /*#__PURE__*/React.createElement("p", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "check",
+      size: 36,
+      color: "#10b981"
+    }))), /*#__PURE__*/React.createElement("h3", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 700,
-        fontSize: 15,
+        fontSize: 16,
+        fontWeight: 600,
         color: faceDone ? "var(--green)" : "var(--accent)",
         marginBottom: 8
       }
-    }, faceDone ? "Identity Verified ✓" : "Scanning Biometrics…"), /*#__PURE__*/React.createElement("div", {
+    }, faceDone ? "Biometric Signature Validated" : "Scanning Facial Biometrics..."), /*#__PURE__*/React.createElement("div", {
       style: {
-        background: "var(--bg3)",
-        borderRadius: 8,
+        background: "rgba(255, 255, 255, 0.05)",
+        borderRadius: "var(--radius-full)",
         height: 6,
         overflow: "hidden",
         marginBottom: 8
@@ -901,17 +1289,17 @@
       style: {
         height: "100%",
         width: `${faceProgress}%`,
-        background: "linear-gradient(90deg,var(--accent),var(--green))",
-        transition: "width 0.15s"
+        background: "linear-gradient(90deg, var(--accent), var(--green))",
+        transition: "width 0.15s ease"
       }
     })), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 12,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         fontFamily: "var(--mono)",
-        marginBottom: 12
+        marginBottom: 16
       }
-    }, Math.round(faceProgress), "% complete"), /*#__PURE__*/React.createElement("div", {
+    }, Math.round(faceProgress), "% verification complete"), /*#__PURE__*/React.createElement("div", {
       className: "card-inner",
       style: {
         padding: "12px 14px",
@@ -923,6 +1311,8 @@
       color: l.color
     }))))));
   }
+
+  // Ballot Voting Screen
   function VoteScreen({
     voter,
     candidates,
@@ -947,7 +1337,7 @@
     };
     const handleSubmit = () => {
       setStage("encrypting");
-      const steps = [["Encrypting ballot with AES-256-GCM…", "var(--text2)", 0], ["Signing payload with RSA-2048…", "var(--text2)", 700], ["Establishing TLS 1.3 handshake…", "var(--text2)", 1400], ["Broadcasting to Hyperledger peer nodes…", "var(--text2)", 2100], ["Generating zk-SNARK anonymity proof…", "#a78bfa", 2800], ["Endorsing via Raft consensus…", "var(--text2)", 3500], ["Block confirmed on ledger ✓", "#4ade80", 4200]];
+      const steps = [["Encapsulating ballot payload with AES-256-GCM envelope...", "var(--text-muted)", 0], ["Signing payload with elector RSA-2048 keypair...", "var(--text-muted)", 700], ["Broadcasting cryptogram to Hyperledger peer consensus nodes...", "var(--text-muted)", 1400], ["Synthesizing zk-SNARK zero-knowledge anonymity proof...", "#c084fc", 2100], ["Verifying Merkle root constraints across validator quorum...", "var(--text-muted)", 2800], ["Consensus achieved via Raft protocol round...", "var(--text-muted)", 3500], ["Block committed to immutable ledger root ✓", "#34d399", 4200]];
       steps.forEach(([txt, color, delay], i) => safeTimeout(() => {
         setEncLines(l => [...l, {
           txt,
@@ -958,285 +1348,310 @@
       }, delay));
       safeTimeout(() => onVoted(selected), 5000);
     };
-    if (stage === "encrypting") return /*#__PURE__*/React.createElement("div", {
-      style: {
-        minHeight: "100vh",
-        paddingTop: 52,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "72px 20px 24px",
-        background: "var(--bg)"
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        maxWidth: 460,
-        width: "100%",
-        textAlign: "center"
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 42,
-        marginBottom: 14,
-        animation: "spin 2s linear infinite",
-        display: "inline-block"
-      }
-    }, "\u26D3\uFE0F"), /*#__PURE__*/React.createElement("h3", {
-      style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
-        fontSize: 21,
-        color: "var(--text)",
-        marginBottom: 6
-      }
-    }, "Recording on Blockchain"), /*#__PURE__*/React.createElement("p", {
-      style: {
-        color: "var(--text3)",
-        fontSize: 13,
-        marginBottom: 20
-      }
-    }, "Do not close this window"), /*#__PURE__*/React.createElement("div", {
-      style: {
-        background: "var(--bg3)",
-        borderRadius: 8,
-        height: 8,
-        overflow: "hidden",
-        marginBottom: 6
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        height: "100%",
-        width: `${encProgress}%`,
-        background: "linear-gradient(90deg,#0369a1,#0ea5e9,#10b981)",
-        transition: "width 0.6s ease",
-        borderRadius: 8
-      }
-    })), /*#__PURE__*/React.createElement("p", {
-      style: {
-        fontSize: 12,
-        color: "var(--accent)",
-        fontFamily: "var(--mono)",
-        marginBottom: 18
-      }
-    }, encProgress, "%"), /*#__PURE__*/React.createElement("div", {
-      className: "card",
-      style: {
-        padding: "14px 18px",
-        textAlign: "left"
-      }
-    }, encLines.map(l => /*#__PURE__*/React.createElement(TerminalLine, {
-      key: l.id,
-      text: l.txt,
-      color: l.color
-    })))));
-    if (stage === "confirm") return /*#__PURE__*/React.createElement("div", {
-      style: {
-        minHeight: "100vh",
-        paddingTop: 52,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "72px 20px 24px",
-        background: "var(--bg)"
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        maxWidth: 420,
-        width: "100%"
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "card",
-      style: {
-        padding: 26,
-        textAlign: "center"
-      }
-    }, /*#__PURE__*/React.createElement("p", {
-      style: {
-        fontSize: 11,
-        color: "var(--text3)",
-        fontFamily: "var(--mono)",
-        letterSpacing: 1,
-        marginBottom: 14
-      }
-    }, "CONFIRM YOUR VOTE"), /*#__PURE__*/React.createElement("div", {
-      style: {
-        fontSize: 48,
-        marginBottom: 10
-      }
-    }, selected.symbol), /*#__PURE__*/React.createElement("h3", {
-      style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
-        fontSize: 21,
-        color: "var(--text)",
-        marginBottom: 4
-      }
-    }, selected.name), /*#__PURE__*/React.createElement("p", {
-      style: {
-        color: selected.color,
-        fontSize: 14,
-        marginBottom: 4
-      }
-    }, selected.party), /*#__PURE__*/React.createElement("span", {
-      className: "tag",
-      style: {
-        background: "var(--bg3)",
-        border: "1px solid var(--border2)",
-        color: "var(--text2)",
-        marginBottom: 18,
-        display: "inline-flex"
-      }
-    }, voter.constituency), /*#__PURE__*/React.createElement("div", {
-      className: "card-inner",
-      style: {
-        padding: "10px 14px",
-        marginBottom: 18
-      }
-    }, /*#__PURE__*/React.createElement("p", {
-      style: {
-        fontSize: 12,
-        color: "var(--red)",
-        fontFamily: "var(--mono)"
-      }
-    }, "\u26A0 Irreversible once submitted to blockchain")), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: 10
-      }
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "btn-ghost",
-      style: {
-        padding: 12,
-        fontSize: 14
-      },
-      onClick: () => setStage("pick")
-    }, "\u2190 Change"), /*#__PURE__*/React.createElement("button", {
-      className: "btn-primary",
-      style: {
-        padding: 12,
-        fontSize: 14,
-        background: "linear-gradient(135deg,#065f46,#10b981)"
-      },
-      onClick: handleSubmit
-    }, "\u2713 Confirm")))));
+    if (stage === "encrypting") {
+      return /*#__PURE__*/React.createElement("div", {
+        style: {
+          minHeight: "100vh",
+          paddingTop: 80,
+          paddingBottom: 80,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "80px 20px"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          maxWidth: 460,
+          width: "100%",
+          textAlign: "center"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          background: "rgba(14, 165, 233, 0.1)",
+          border: "1px solid var(--border)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "0 auto 20px"
+        }
+      }, /*#__PURE__*/React.createElement(Icon, {
+        name: "blocks",
+        size: 24,
+        color: "var(--accent)"
+      })), /*#__PURE__*/React.createElement("h3", {
+        style: {
+          fontSize: 20,
+          fontWeight: 700,
+          color: "var(--text)",
+          marginBottom: 6
+        }
+      }, "Recording on Blockchain"), /*#__PURE__*/React.createElement("p", {
+        style: {
+          color: "var(--text-muted)",
+          fontSize: 13,
+          marginBottom: 24
+        }
+      }, "Executing Raft consensus endorsement. Do not disconnect."), /*#__PURE__*/React.createElement("div", {
+        style: {
+          background: "rgba(255, 255, 255, 0.05)",
+          borderRadius: "var(--radius-full)",
+          height: 8,
+          overflow: "hidden",
+          marginBottom: 8
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          height: "100%",
+          width: `${encProgress}%`,
+          background: "linear-gradient(90deg, #0284c7, #0ea5e9, #10b981)",
+          transition: "width 0.5s ease"
+        }
+      })), /*#__PURE__*/React.createElement("p", {
+        style: {
+          fontSize: 12,
+          color: "var(--accent)",
+          fontFamily: "var(--mono)",
+          marginBottom: 20
+        }
+      }, encProgress, "% committed"), /*#__PURE__*/React.createElement("div", {
+        className: "card",
+        style: {
+          padding: "16px 20px",
+          textAlign: "left"
+        }
+      }, encLines.map(l => /*#__PURE__*/React.createElement(TerminalLine, {
+        key: l.id,
+        text: l.txt,
+        color: l.color
+      })))));
+    }
+    if (stage === "confirm") {
+      return /*#__PURE__*/React.createElement("div", {
+        style: {
+          minHeight: "100vh",
+          paddingTop: 80,
+          paddingBottom: 80,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "80px 20px"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        style: {
+          maxWidth: 440,
+          width: "100%"
+        }
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "card",
+        style: {
+          padding: 32,
+          textAlign: "center"
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "tag",
+        style: {
+          background: "rgba(245, 158, 11, 0.1)",
+          border: "1px solid rgba(245, 158, 11, 0.3)",
+          color: "var(--amber)",
+          marginBottom: 18
+        }
+      }, "FINAL REVIEW"), /*#__PURE__*/React.createElement("div", {
+        style: {
+          width: 56,
+          height: 56,
+          borderRadius: "var(--radius-md)",
+          background: "rgba(255, 255, 255, 0.05)",
+          border: `1px solid ${selected.color}40`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 22,
+          margin: "0 auto 14px",
+          color: selected.color
+        }
+      }, selected.symbol), /*#__PURE__*/React.createElement("h3", {
+        style: {
+          fontSize: 22,
+          fontWeight: 700,
+          color: "var(--text)",
+          marginBottom: 4
+        }
+      }, selected.name), /*#__PURE__*/React.createElement("p", {
+        style: {
+          color: selected.color,
+          fontSize: 14,
+          fontWeight: 500,
+          marginBottom: 12
+        }
+      }, selected.party), /*#__PURE__*/React.createElement("span", {
+        className: "tag",
+        style: {
+          background: "var(--surface-3)",
+          color: "var(--text-muted)",
+          marginBottom: 20
+        }
+      }, voter.constituency), /*#__PURE__*/React.createElement("div", {
+        className: "card-inner",
+        style: {
+          padding: "12px 14px",
+          marginBottom: 24
+        }
+      }, /*#__PURE__*/React.createElement("p", {
+        style: {
+          fontSize: 12,
+          color: "var(--text-dim)",
+          lineHeight: 1.6
+        }
+      }, "Once verified, your ballot is irreversibly decoupled from your identity and registered to the consensus state.")), /*#__PURE__*/React.createElement("div", {
+        style: {
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 12
+        }
+      }, /*#__PURE__*/React.createElement("button", {
+        className: "btn-ghost",
+        style: {
+          padding: 13,
+          fontSize: 14
+        },
+        onClick: () => setStage("pick")
+      }, "\u2190 Change Choice"), /*#__PURE__*/React.createElement("button", {
+        className: "btn-primary",
+        style: {
+          padding: 13,
+          fontSize: 14,
+          background: "linear-gradient(180deg, #059669 0%, #047857 100%)"
+        },
+        onClick: handleSubmit
+      }, "Confirm & Sign Ballot")))));
+    }
     return /*#__PURE__*/React.createElement("div", {
       style: {
         minHeight: "100vh",
-        paddingTop: 52,
-        background: "var(--bg)"
+        paddingTop: 80,
+        paddingBottom: 80
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        maxWidth: 640,
+        maxWidth: 680,
         margin: "0 auto",
-        padding: "28px 20px"
+        padding: "0 20px"
       }
     }, /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
-        padding: "14px 18px",
-        marginBottom: 18,
+        padding: "16px 20px",
+        marginBottom: 28,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         flexWrap: "wrap",
-        gap: 8
+        gap: 12
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         alignItems: "center",
-        gap: 10
+        gap: 12
       }
-    }, /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 24
-      }
-    }, voter.photo), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-      style: {
-        fontFamily: "var(--font)",
+        width: 38,
+        height: 38,
+        borderRadius: "50%",
+        background: "rgba(14, 165, 233, 0.15)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 14,
         fontWeight: 700,
+        color: "var(--accent)"
+      }
+    }, voter.name.charAt(0)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+      style: {
+        fontWeight: 600,
         fontSize: 14,
         color: "var(--text)"
       }
     }, voter.name), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         fontFamily: "var(--mono)"
       }
-    }, voter.voterID))), /*#__PURE__*/React.createElement("div", {
+    }, "ID: ", voter.voterID))), /*#__PURE__*/React.createElement("div", {
       style: {
         textAlign: "right"
       }
     }, /*#__PURE__*/React.createElement("p", {
       style: {
-        fontSize: 12,
-        color: "var(--text2)"
+        fontSize: 13,
+        color: "var(--text)",
+        fontWeight: 500
       }
     }, voter.constituency), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 11,
-        color: "var(--text3)"
+        color: "var(--text-dim)"
       }
-    }, "General Election 2026"))), /*#__PURE__*/React.createElement("h2", {
+    }, "Parliamentary Segment"))), /*#__PURE__*/React.createElement("div", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
-        fontSize: 21,
+        marginBottom: 20
+      }
+    }, /*#__PURE__*/React.createElement("h2", {
+      style: {
+        fontSize: 22,
+        fontWeight: 700,
         color: "var(--text)",
         marginBottom: 4
       }
-    }, "Select Your Candidate"), /*#__PURE__*/React.createElement("p", {
+    }, "Official Candidate Ballot \u2014 Select Your Candidate"), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 13,
-        color: "var(--text3)",
-        marginBottom: 18
+        color: "var(--text-muted)"
       }
-    }, "Tap to expand \xB7 Your choice is encrypted end-to-end"), /*#__PURE__*/React.createElement("div", {
+    }, "Select your candidate. Click row to inspect manifesto commitments.")), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         flexDirection: "column",
-        gap: 10,
-        marginBottom: 20
+        gap: 12,
+        marginBottom: 24
       }
     }, cands.map(c => {
-      const isSel = selected?.id === c.id,
-        isExp = expanded === c.id;
+      const isSel = selected?.id === c.id;
+      const isExp = expanded === c.id;
       return /*#__PURE__*/React.createElement("div", {
         key: c.id,
         onClick: () => {
           setSelected(c);
           setExpanded(isExp ? null : c.id);
         },
+        className: `candidate-card ${isSel ? "selected" : ""}`,
         style: {
-          borderRadius: 14,
-          border: `2px solid ${isSel ? c.color : "var(--border)"}`,
-          background: isSel ? `${c.color}12` : "var(--bg2)",
-          cursor: "pointer",
-          transition: "all 0.2s",
-          transform: isSel ? "scale(1.01)" : "scale(1)",
-          boxShadow: isSel ? `0 4px 20px ${c.color}30` : "none",
-          overflow: "hidden"
+          "--candidate-color": c.color,
+          cursor: "pointer"
         }
       }, /*#__PURE__*/React.createElement("div", {
         style: {
-          padding: "15px 18px",
+          padding: "16px 20px",
           display: "flex",
           alignItems: "center",
-          gap: 12
+          gap: 14
         }
       }, /*#__PURE__*/React.createElement("div", {
         style: {
-          width: 42,
-          height: 42,
-          borderRadius: 10,
+          width: 44,
+          height: 44,
+          borderRadius: "var(--radius-md)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: 22,
-          background: isSel ? `${c.color}20` : "var(--bg3)",
+          fontSize: 20,
+          background: isSel ? `${c.color}20` : "rgba(255, 255, 255, 0.04)",
+          color: c.color,
           flexShrink: 0
         }
       }, c.symbol), /*#__PURE__*/React.createElement("div", {
@@ -1252,62 +1667,59 @@
         }
       }, /*#__PURE__*/React.createElement("span", {
         style: {
-          fontFamily: "var(--font)",
-          fontWeight: 700,
+          fontWeight: 600,
           fontSize: 15,
           color: "var(--text)"
         }
       }, c.name), /*#__PURE__*/React.createElement("span", {
         className: "tag",
         style: {
-          background: "var(--bg3)",
-          border: "1px solid var(--border)",
-          color: "var(--text3)",
+          background: "rgba(255, 255, 255, 0.05)",
+          color: "var(--text-muted)",
           fontSize: 10
         }
       }, c.abbr)), /*#__PURE__*/React.createElement("p", {
         style: {
           fontSize: 12,
-          color: c.color
+          color: c.color,
+          fontWeight: 500
         }
       }, c.party)), /*#__PURE__*/React.createElement("div", {
         style: {
-          width: 20,
-          height: 20,
+          width: 22,
+          height: 22,
           borderRadius: "50%",
-          border: `2px solid ${isSel ? c.color : "var(--border2)"}`,
+          border: `2px solid ${isSel ? c.color : "var(--border)"}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           background: isSel ? c.color : "transparent",
-          flexShrink: 0
+          transition: "all 0.2s"
         }
-      }, isSel && /*#__PURE__*/React.createElement("div", {
-        style: {
-          width: 7,
-          height: 7,
-          borderRadius: "50%",
-          background: "white"
-        }
+      }, isSel && /*#__PURE__*/React.createElement(Icon, {
+        name: "check",
+        size: 12,
+        color: "#fff"
       }))), isExp && c.manifesto && /*#__PURE__*/React.createElement("div", {
         style: {
-          padding: "0 18px 14px",
+          padding: "0 20px 16px",
           borderTop: "1px solid var(--border)",
           paddingTop: 12,
           animation: "fadeUp 0.2s ease"
         }
-      }, /*#__PURE__*/React.createElement("p", {
+      }, /*#__PURE__*/React.createElement("span", {
         style: {
-          fontSize: 11,
-          color: "var(--text3)",
+          fontSize: 10,
+          color: "var(--text-dim)",
           fontFamily: "var(--mono)",
-          marginBottom: 6,
-          letterSpacing: 1
+          letterSpacing: "0.05em",
+          display: "block",
+          marginBottom: 4
         }
-      }, "MANIFESTO"), /*#__PURE__*/React.createElement("p", {
+      }, "KEY POLICY COMMITMENTS"), /*#__PURE__*/React.createElement("p", {
         style: {
           fontSize: 13,
-          color: "var(--text2)",
+          color: "var(--text-muted)",
           lineHeight: 1.6
         }
       }, c.manifesto)));
@@ -1315,13 +1727,15 @@
       className: "btn-primary",
       style: {
         width: "100%",
-        padding: 15,
+        padding: 16,
         fontSize: 15
       },
       disabled: !selected,
       onClick: () => setStage("confirm")
-    }, selected ? `PROCEED WITH VOTE FOR ${selected.name.toUpperCase()} →` : "SELECT A CANDIDATE TO CONTINUE")));
+    }, selected ? `Proceed with Vote for ${selected.name.toUpperCase()} →` : "Select a Candidate to Continue")));
   }
+
+  // Success & Digital Cryptographic Receipt Screen
   function SuccessScreen({
     voter,
     hash,
@@ -1359,183 +1773,214 @@
     return /*#__PURE__*/React.createElement("div", {
       style: {
         minHeight: "100vh",
-        paddingTop: 52,
+        paddingTop: 80,
+        paddingBottom: 80,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "72px 20px 24px",
-        background: "var(--bg)"
+        padding: "80px 20px"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        maxWidth: 480,
+        maxWidth: 500,
         width: "100%"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         textAlign: "center",
-        marginBottom: 22,
-        animation: "pop 0.5s ease both"
+        marginBottom: 28,
+        animation: "fadeUp 0.4s ease"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 60,
-        marginBottom: 10
+        width: 56,
+        height: 56,
+        borderRadius: "50%",
+        background: "rgba(16, 185, 129, 0.1)",
+        border: "1px solid rgba(16, 185, 129, 0.3)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        margin: "0 auto 16px"
       }
-    }, "\u2705"), /*#__PURE__*/React.createElement("h2", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "check",
+      size: 28,
+      color: "#10b981"
+    })), /*#__PURE__*/React.createElement("h2", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
-        fontSize: 26,
+        fontSize: 24,
+        fontWeight: 700,
         color: "var(--green)",
         marginBottom: 4
       }
-    }, "Vote Recorded!"), /*#__PURE__*/React.createElement("p", {
+    }, "Vote Recorded \u2014 Cryptographically Committed"), /*#__PURE__*/React.createElement("p", {
       style: {
-        color: "var(--text3)",
-        fontSize: 14
+        color: "var(--text-muted)",
+        fontSize: 13
       }
-    }, "Immutably stored on Hyperledger Fabric blockchain.")), /*#__PURE__*/React.createElement("div", {
+    }, "Immutably registered to the decentralized ledger with zk-SNARK proof.")), /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
         padding: 0,
         overflow: "hidden",
-        marginBottom: 14
+        marginBottom: 20
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        padding: "11px 18px",
-        background: "linear-gradient(90deg,#0c2a0c,#0a1525)",
+        padding: "14px 20px",
+        background: "rgba(16, 185, 129, 0.08)",
         borderBottom: "1px solid var(--border)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
         display: "flex",
         alignItems: "center",
         gap: 8
       }
-    }, /*#__PURE__*/React.createElement("span", null, "\uD83E\uDDFE"), /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "shield",
+      size: 14,
+      color: "#10b981"
+    }), /*#__PURE__*/React.createElement("span", {
       style: {
         fontFamily: "var(--mono)",
         fontSize: 11,
-        color: "var(--green)",
-        letterSpacing: 2
+        fontWeight: 600,
+        color: "#34d399",
+        letterSpacing: "0.05em"
       }
-    }, "CRYPTOGRAPHIC VOTE RECEIPT")), /*#__PURE__*/React.createElement("div", {
+    }, "OFFICIAL CRYPTOGRAPHIC RECEIPT")), /*#__PURE__*/React.createElement("span", {
       style: {
-        padding: 18,
+        fontSize: 11,
+        color: "var(--text-dim)",
+        fontFamily: "var(--mono)"
+      }
+    }, "CONFIRMED")), /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: 22,
         display: "flex",
         flexDirection: "column",
-        gap: 10
+        gap: 12
       }
-    }, [["Voter Name", voter.name], ["Voter ID", voter.voterID], ["Constituency", voter.constituency], ["Block ID", blockId], ["Timestamp", new Date().toLocaleString("en-IN", {
+    }, [["Elector Name", voter.name], ["Elector Registration ID", voter.voterID], ["Constituency", voter.constituency], ["Ledger Block Height", blockId], ["Timestamp", new Date().toLocaleString("en-IN", {
       dateStyle: "medium",
       timeStyle: "medium"
-    })], ["Confirmations", "1 (propagating…)"]].map(([k, v]) => /*#__PURE__*/React.createElement("div", {
+    })], ["Network Confirmations", "128 (Consensus finalized)"]].map(([k, v]) => /*#__PURE__*/React.createElement("div", {
       key: k,
       style: {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingBottom: 8,
+        paddingBottom: 10,
         borderBottom: "1px solid var(--border)"
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 12,
-        color: "var(--text3)"
+        color: "var(--text-dim)"
       }
     }, k), /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 13,
         color: "var(--text)",
-        fontFamily: k === "Block ID" || k === "Voter ID" ? "var(--mono)" : "inherit",
-        fontWeight: 600
+        fontWeight: 500,
+        fontFamily: k.includes("ID") || k.includes("Height") ? "var(--mono)" : "inherit"
       }
-    }, v))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    }, v))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        marginTop: 4
+      }
+    }, /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 6
+        marginBottom: 8
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 12,
-        color: "var(--text3)"
+        color: "var(--text-dim)"
       }
-    }, "Vote Hash (zk-SNARK)"), /*#__PURE__*/React.createElement("button", {
+    }, "zk-SNARK Transaction Proof"), /*#__PURE__*/React.createElement("button", {
       onClick: handleCopy,
+      className: "demo-chip",
       style: {
-        padding: "3px 10px",
-        borderRadius: 6,
-        border: "1px solid var(--border2)",
-        background: "transparent",
-        color: copied ? "var(--green)" : "var(--text3)",
-        cursor: "pointer",
-        fontSize: 11,
-        fontFamily: "var(--mono)"
+        padding: "4px 10px",
+        fontSize: 11
       }
-    }, copied ? "✓ Copied" : "Copy")), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: copied ? "check" : "copy",
+      size: 11,
+      color: copied ? "var(--green)" : "currentColor"
+    }), copied ? "Copied" : "Copy Hash")), /*#__PURE__*/React.createElement("div", {
       style: {
-        padding: "10px 12px",
-        background: "var(--bg1)",
-        borderRadius: 8,
+        padding: "12px 14px",
+        background: "rgba(9, 13, 20, 0.8)",
+        borderRadius: "var(--radius-sm)",
         border: "1px solid var(--border)"
       }
     }, /*#__PURE__*/React.createElement("p", {
       style: {
         fontFamily: "var(--mono)",
-        fontSize: 10,
-        color: "#a78bfa",
+        fontSize: 11,
+        color: "#c084fc",
         wordBreak: "break-all",
         lineHeight: 1.6
       }
     }, hash)), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
-        fontFamily: "var(--mono)",
-        marginTop: 6,
+        color: "var(--text-dim)",
+        marginTop: 8,
         fontStyle: "italic"
       }
-    }, "\uD83C\uDFAD Vote choice protected by zk-SNARKs \u2014 cannot be revealed even by officials.")))), /*#__PURE__*/React.createElement("div", {
+    }, "Zero-knowledge proof allows ledger verification without disclosing your candidate preference.")))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "grid",
         gridTemplateColumns: "1fr 1fr 1fr",
-        gap: 8,
-        marginBottom: 10
+        gap: 10,
+        marginBottom: 12
       }
     }, /*#__PURE__*/React.createElement("button", {
       className: "btn-ghost",
       style: {
-        padding: 11,
+        padding: 12,
         fontSize: 13
       },
       onClick: onAudit
-    }, "\uD83D\uDD0D Verify"), /*#__PURE__*/React.createElement("button", {
+    }, "Audit on Ledger"), /*#__PURE__*/React.createElement("button", {
       className: "btn-ghost",
       style: {
-        padding: 11,
+        padding: 12,
         fontSize: 13
       },
       onClick: onResults
-    }, "\uD83D\uDCCA Results"), /*#__PURE__*/React.createElement("button", {
+    }, "Live Tally"), /*#__PURE__*/React.createElement("button", {
       className: "btn-ghost",
       style: {
-        padding: 11,
+        padding: 12,
         fontSize: 13
       },
       onClick: onReset
-    }, "\u2190 Home")), /*#__PURE__*/React.createElement("button", {
+    }, "Home Overview")), /*#__PURE__*/React.createElement("button", {
       className: "btn-ghost",
       style: {
         width: "100%",
-        padding: 10,
+        padding: 11,
         fontSize: 12,
         color: "var(--accent)",
-        borderColor: "var(--border2)"
+        borderColor: "var(--border)"
       },
       onClick: onReset
-    }, "\uD83D\uDC64 Switch Voter & Cast Another Ballot")));
+    }, "Switch Voter & Cast Another Ballot")));
   }
+
+  // Live Election Results Screen
   function ResultsScreen({
     candidates,
     blockchainLog
@@ -1547,101 +1992,114 @@
     const sorted = [...cands].sort((a, b) => b.votes - a.votes);
     const [animated, setAnimated] = useState(false);
     useEffect(() => {
-      const t = setTimeout(() => setAnimated(true), 200);
+      const t = setTimeout(() => setAnimated(true), 150);
       return () => clearTimeout(t);
     }, []);
     return /*#__PURE__*/React.createElement("div", {
       style: {
         minHeight: "100vh",
-        paddingTop: 52,
-        background: "var(--bg)"
+        paddingTop: 80,
+        paddingBottom: 80
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        maxWidth: 660,
+        maxWidth: 720,
         margin: "0 auto",
-        padding: "28px 20px"
+        padding: "0 20px"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 22,
+        marginBottom: 28,
         flexWrap: "wrap",
-        gap: 10
+        gap: 12
       }
     }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
         fontSize: 24,
+        fontWeight: 700,
         color: "var(--text)",
-        marginBottom: 2
+        marginBottom: 4
       }
-    }, "Live Election Results"), /*#__PURE__*/React.createElement("p", {
+    }, "Live Election Telemetry"), /*#__PURE__*/React.createElement("p", {
       style: {
-        fontSize: 12,
-        color: "var(--text3)"
+        fontSize: 13,
+        color: "var(--text-muted)"
       }
-    }, "Auto-tallied by Smart Contracts \xB7 No manual counting")), /*#__PURE__*/React.createElement("div", {
+    }, "Automated smart contract tallying updated at block ", latestBlock)), /*#__PURE__*/React.createElement("div", {
       className: "tag",
       style: {
-        background: "var(--bg3)",
-        border: "1px solid var(--border2)",
-        color: "var(--text2)"
+        background: "rgba(16, 185, 129, 0.08)",
+        border: "1px solid rgba(16, 185, 129, 0.2)",
+        color: "#34d399"
       }
     }, /*#__PURE__*/React.createElement("span", {
       className: "status-dot",
       style: {
-        background: "#4ade80"
+        background: "#10b981"
       }
-    }), "LIVE \xB7 ", fmtNum(total), " counted")), /*#__PURE__*/React.createElement("div", {
+    }), fmtNum(total), " BALLOTS COUNTED")), /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
         padding: 0,
         overflow: "hidden",
-        marginBottom: 14,
-        border: `1px solid ${sorted[0].color}40`,
-        boxShadow: `0 0 28px ${sorted[0].color}12`
+        marginBottom: 20,
+        borderColor: `${sorted[0].color}40`
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        padding: "10px 18px",
-        background: `linear-gradient(90deg,${sorted[0].color}18,transparent)`,
+        padding: "12px 20px",
+        background: `linear-gradient(90deg, ${sorted[0].color}15, transparent)`,
         borderBottom: "1px solid var(--border)",
         display: "flex",
         alignItems: "center",
-        gap: 8
-      }
-    }, /*#__PURE__*/React.createElement("span", null, "\uD83C\uDFC6"), /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontFamily: "var(--mono)",
-        fontSize: 11,
-        color: sorted[0].color,
-        letterSpacing: 2
-      }
-    }, "LEADING CANDIDATE")), /*#__PURE__*/React.createElement("div", {
-      style: {
-        padding: 18,
-        display: "flex",
-        alignItems: "center",
-        gap: 14,
-        flexWrap: "wrap"
+        justifyContent: "space-between"
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
-        fontSize: 44
+        fontFamily: "var(--mono)",
+        fontSize: 11,
+        fontWeight: 600,
+        color: sorted[0].color,
+        letterSpacing: "0.05em"
+      }
+    }, "LEADING CONSTITUENCY CANDIDATE"), /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 12,
+        fontWeight: 700,
+        color: sorted[0].color
+      }
+    }, "Margin: +", fmtNum(sorted[0].votes - sorted[1].votes))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        padding: 22,
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
+        flexWrap: "wrap"
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 52,
+        height: 52,
+        borderRadius: "var(--radius-md)",
+        background: "rgba(255, 255, 255, 0.04)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 26,
+        color: sorted[0].color
       }
     }, sorted[0].symbol), /*#__PURE__*/React.createElement("div", {
       style: {
-        flex: 1
+        flex: 1,
+        minWidth: 200
       }
     }, /*#__PURE__*/React.createElement("h3", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
         fontSize: 20,
+        fontWeight: 700,
         color: "var(--text)",
         marginBottom: 2
       }
@@ -1649,22 +2107,22 @@
       style: {
         color: sorted[0].color,
         fontSize: 13,
-        marginBottom: 8
+        fontWeight: 500,
+        marginBottom: 10
       }
     }, sorted[0].party), /*#__PURE__*/React.createElement("div", {
       style: {
-        background: "var(--bg3)",
-        borderRadius: 6,
-        height: 10,
+        background: "rgba(255, 255, 255, 0.05)",
+        borderRadius: "var(--radius-full)",
+        height: 8,
         overflow: "hidden"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         height: "100%",
         width: animated ? `${(sorted[0].votes / total * 100).toFixed(1)}%` : "0%",
-        background: `linear-gradient(90deg,${sorted[0].color},${sorted[0].color}80)`,
-        transition: "width 1.2s cubic-bezier(0.34,1.56,0.64,1)",
-        borderRadius: 6
+        background: sorted[0].color,
+        transition: "width 1s cubic-bezier(0.16, 1, 0.3, 1)"
       }
     }))), /*#__PURE__*/React.createElement("div", {
       style: {
@@ -1672,23 +2130,23 @@
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
-        fontSize: 26,
+        fontFamily: "var(--mono)",
+        fontWeight: 700,
+        fontSize: 28,
         color: sorted[0].color
       }
     }, (sorted[0].votes / total * 100).toFixed(1), "%"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontSize: 12,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         fontFamily: "var(--mono)"
       }
-    }, fmtNum(sorted[0].votes))))), /*#__PURE__*/React.createElement("div", {
+    }, fmtNum(sorted[0].votes), " votes")))), /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         flexDirection: "column",
-        gap: 10,
-        marginBottom: 20
+        gap: 12,
+        marginBottom: 24
       }
     }, sorted.map((c, i) => {
       const pct = (c.votes / total * 100).toFixed(1);
@@ -1696,25 +2154,25 @@
         key: c.id,
         className: "card",
         style: {
-          padding: "14px 18px"
+          padding: "16px 20px"
         }
       }, /*#__PURE__*/React.createElement("div", {
         style: {
           display: "flex",
           alignItems: "center",
-          gap: 10,
-          marginBottom: 8
+          gap: 12,
+          marginBottom: 10
         }
       }, /*#__PURE__*/React.createElement("span", {
         style: {
           fontFamily: "var(--mono)",
           fontSize: 12,
-          color: "var(--text3)",
-          width: 14
+          color: "var(--text-dim)",
+          width: 16
         }
       }, "#", i + 1), /*#__PURE__*/React.createElement("span", {
         style: {
-          fontSize: 18
+          fontSize: 16
         }
       }, c.symbol), /*#__PURE__*/React.createElement("div", {
         style: {
@@ -1722,15 +2180,14 @@
         }
       }, /*#__PURE__*/React.createElement("span", {
         style: {
-          fontFamily: "var(--font)",
-          fontWeight: 700,
+          fontWeight: 600,
           fontSize: 14,
           color: "var(--text)"
         }
       }, c.name), /*#__PURE__*/React.createElement("span", {
         style: {
-          fontSize: 11,
-          color: "var(--text3)",
+          fontSize: 12,
+          color: "var(--text-dim)",
           marginLeft: 8
         }
       }, c.party)), /*#__PURE__*/React.createElement("div", {
@@ -1739,22 +2196,22 @@
         }
       }, /*#__PURE__*/React.createElement("span", {
         style: {
-          fontFamily: "var(--font)",
-          fontWeight: 700,
-          fontSize: 15,
+          fontFamily: "var(--mono)",
+          fontWeight: 600,
+          fontSize: 14,
           color: c.color
         }
       }, pct, "%"), /*#__PURE__*/React.createElement("p", {
         style: {
-          fontSize: 10,
-          color: "var(--text3)",
+          fontSize: 11,
+          color: "var(--text-dim)",
           fontFamily: "var(--mono)"
         }
       }, fmtNum(c.votes)))), /*#__PURE__*/React.createElement("div", {
         style: {
-          background: "var(--bg3)",
-          borderRadius: 4,
-          height: 5,
+          background: "rgba(255, 255, 255, 0.05)",
+          borderRadius: "var(--radius-full)",
+          height: 6,
           overflow: "hidden"
         }
       }, /*#__PURE__*/React.createElement("div", {
@@ -1762,8 +2219,7 @@
           height: "100%",
           width: animated ? `${pct}%` : "0%",
           background: c.color,
-          transition: `width ${1 + i * 0.1}s cubic-bezier(0.34,1.2,0.64,1)`,
-          borderRadius: 4
+          transition: `width ${0.8 + i * 0.1}s cubic-bezier(0.16, 1, 0.3, 1)`
         }
       })));
     })), /*#__PURE__*/React.createElement("div", {
@@ -1774,38 +2230,39 @@
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        padding: "11px 18px",
+        padding: "14px 20px",
         borderBottom: "1px solid var(--border)"
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 700,
-        fontSize: 14,
+        fontWeight: 600,
+        fontSize: 13,
         color: "var(--text)"
       }
-    }, "Smart Contract Audit Log")), /*#__PURE__*/React.createElement("div", {
+    }, "Smart Contract Verifier Telemetry")), /*#__PURE__*/React.createElement("div", {
       style: {
-        padding: "12px 16px",
+        padding: "14px 18px",
         fontFamily: "var(--mono)",
         fontSize: 11,
         display: "flex",
         flexDirection: "column",
-        gap: 5
+        gap: 6
       }
-    }, [`TallyContract.autoTally() executed at block ${latestBlock}`, `Chaincode verified ${fmtNum(total)} valid transactions`, `zk-SNARK proofs validated: ${fmtNum(total)} / ${fmtNum(total)}`, "Result hash: 0x8f3c...e1a4 committed to ledger", "Public verifier portal updated — 0 disputes"].map((l, i) => /*#__PURE__*/React.createElement("div", {
+    }, [`TallyContract.autoTally() executed at block ${latestBlock}`, `Consensus verified ${fmtNum(total)} valid ballot envelopes`, `zk-SNARK constraint validations: ${fmtNum(total)} / ${fmtNum(total)} passing`, "State root 0x8f3c7a... committed to decentralized cluster", "Public verifier query endpoint synchronized — 0 contested proofs"].map((l, i) => /*#__PURE__*/React.createElement("div", {
       key: l,
       style: {
-        color: i === 4 ? "#4ade80" : "var(--text2)",
+        color: i === 4 ? "#34d399" : "var(--text-muted)",
         display: "flex",
         gap: 8
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
-        color: "var(--text3)"
+        color: "var(--text-dim)"
       }
     }, "\u203A"), l))))));
   }
+
+  // Public Audit Portal Screen
   function AuditScreen({
     defaultHash,
     receiptLedger
@@ -1837,14 +2294,14 @@
       if (!trimmed.startsWith("0x") || trimmed.length < 10) {
         setResult({
           valid: false,
-          error: "Invalid hash format. Receipt hash must start with 0x and be at least 10 characters."
+          error: "Invalid cryptographic format. Hash must begin with 0x and contain valid hexadecimal digits."
         });
         return;
       }
       setLoading(true);
       setResult(null);
       setLines([]);
-      const steps = [["Connecting to Hyperledger Fabric gateway…", 300], ["Querying CouchDB state database…", 800], ["Retrieving block metadata…", 1400], ["Validating zk-SNARK proof…", 2000], ["Cross-checking Raft consensus log…", 2600], ["Verification complete ✓", 3200]];
+      const steps = [["Querying Hyperledger Fabric peer gateway...", 300], ["Scanning CouchDB state tree for transaction hash...", 800], ["Verifying Merkle-Patricia block membership proof...", 1400], ["Validating zk-SNARK constraint satisfaction...", 2000], ["Cross-referencing Raft consensus commit log...", 2600], ["State verification finalized ✓", 3200]];
       steps.forEach(([txt, delay]) => safeTimeout(() => setLines(l => [...l, {
         txt,
         id: Date.now() + delay
@@ -1871,68 +2328,78 @@
     return /*#__PURE__*/React.createElement("div", {
       style: {
         minHeight: "100vh",
-        paddingTop: 52,
-        background: "var(--bg)"
+        paddingTop: 80,
+        paddingBottom: 80
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        maxWidth: 540,
+        maxWidth: 580,
         margin: "0 auto",
-        padding: "28px 20px"
+        padding: "0 20px"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         textAlign: "center",
-        marginBottom: 24
+        marginBottom: 28
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 30,
-        marginBottom: 8
+        width: 52,
+        height: 52,
+        borderRadius: "var(--radius-md)",
+        background: "rgba(14, 165, 233, 0.1)",
+        border: "1px solid var(--border)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        margin: "0 auto 14px"
       }
-    }, "\uD83D\uDD0D"), /*#__PURE__*/React.createElement("h2", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "audit",
+      size: 24,
+      color: "var(--accent)"
+    })), /*#__PURE__*/React.createElement("h2", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 800,
         fontSize: 24,
+        fontWeight: 700,
         color: "var(--text)",
         marginBottom: 6
       }
-    }, "Public Audit Portal"), /*#__PURE__*/React.createElement("p", {
+    }, "Public Ledger Explorer"), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 13,
-        color: "var(--text3)",
-        lineHeight: 1.7
+        color: "var(--text-muted)",
+        lineHeight: 1.6
       }
-    }, "Verify any vote on the public ledger.", /*#__PURE__*/React.createElement("br", null), "Vote choice stays hidden via zk-SNARK cryptography.")), /*#__PURE__*/React.createElement("div", {
+    }, "Validate any ballot proof on the decentralized ledger.", /*#__PURE__*/React.createElement("br", null), "Ballot choices remain hidden via Zero-Knowledge SNARK constraints.")), /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
-        padding: 20,
-        marginBottom: 14
+        padding: 24,
+        marginBottom: 16
       }
     }, /*#__PURE__*/React.createElement("label", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         fontFamily: "var(--mono)",
         display: "block",
         marginBottom: 8,
-        letterSpacing: 1
+        letterSpacing: "0.05em"
       }
-    }, "VOTE RECEIPT HASH"), /*#__PURE__*/React.createElement("textarea", {
+    }, "BALLOT TRANSACTION HASH"), /*#__PURE__*/React.createElement("textarea", {
       value: hash,
       onChange: e => {
         setHash(e.target.value);
         setResult(null);
         setLines([]);
       },
-      placeholder: "Paste your 0x... receipt hash here",
+      placeholder: "Paste 0x... receipt hash here",
       rows: 3,
       style: {
         width: "100%",
         padding: "12px 14px",
-        fontSize: 11,
-        lineHeight: 1.7,
+        fontSize: 12,
+        lineHeight: 1.6,
         resize: "none",
         wordBreak: "break-all"
       }
@@ -1942,16 +2409,15 @@
         alignItems: "center",
         gap: 6,
         flexWrap: "wrap",
-        marginTop: 8,
-        marginBottom: 4
+        marginTop: 10,
+        marginBottom: 6
       }
     }, /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
-        fontFamily: "var(--mono)"
+        color: "var(--text-dim)"
       }
-    }, "Sample blocks:"), INITIAL_BLOCKCHAIN.slice(0, 2).map((b, idx) => /*#__PURE__*/React.createElement("button", {
+    }, "Historical blocks:"), INITIAL_BLOCKCHAIN.slice(0, 2).map((b, idx) => /*#__PURE__*/React.createElement("button", {
       key: idx,
       type: "button",
       className: "demo-chip",
@@ -1964,88 +2430,94 @@
       className: "btn-primary",
       style: {
         width: "100%",
-        padding: 13,
+        padding: 14,
         fontSize: 14,
-        marginTop: 10
+        marginTop: 12
       },
       disabled: !hash || loading,
       onClick: verify
-    }, loading ? "⛓️ Querying blockchain nodes…" : "VERIFY ON CHAIN →")), lines.length > 0 && /*#__PURE__*/React.createElement("div", {
+    }, loading ? "Querying Blockchain Nodes..." : "Verify on Decentralized Ledger →")), lines.length > 0 && /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
-        padding: "14px 16px",
-        marginBottom: 14
+        padding: "16px 20px",
+        marginBottom: 16
       }
     }, /*#__PURE__*/React.createElement("p", {
       style: {
         fontFamily: "var(--mono)",
         fontSize: 11,
-        color: "var(--text3)",
-        letterSpacing: 1,
+        color: "var(--text-dim)",
+        letterSpacing: "0.05em",
         marginBottom: 8
       }
-    }, "QUERY LOG"), lines.map(l => /*#__PURE__*/React.createElement(TerminalLine, {
+    }, "EXPLORER QUERY LOG"), lines.map(l => /*#__PURE__*/React.createElement(TerminalLine, {
       key: l.id,
       text: l.txt,
-      color: l.txt.includes("✓") ? "#4ade80" : "var(--text2)"
+      color: l.txt.includes("✓") ? "#34d399" : "var(--text-muted)"
     })), loading && /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         alignItems: "center",
         gap: 8,
-        marginTop: 4
+        marginTop: 8
       }
-    }, /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "status-dot",
       style: {
-        width: 7,
-        height: 7,
-        borderRadius: "50%",
-        background: "var(--accent)",
-        animation: "blink 0.8s infinite"
+        background: "var(--accent)"
       }
     }), /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         fontFamily: "var(--mono)"
       }
-    }, "processing\u2026"))), result && /*#__PURE__*/React.createElement("div", {
+    }, "Validating cryptographic proof..."))), result && /*#__PURE__*/React.createElement("div", {
       className: "card",
       style: {
-        padding: 20,
-        border: `1px solid ${result.valid ? "#14532d" : "#7f1d1d"}`,
-        animation: "fadeUp 0.4s ease"
+        padding: 24,
+        borderColor: result.valid ? "rgba(16, 185, 129, 0.4)" : "rgba(244, 63, 94, 0.4)",
+        animation: "fadeUp 0.3s ease"
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         alignItems: "center",
-        gap: 10,
-        marginBottom: result.valid ? 14 : 0
+        gap: 12,
+        marginBottom: result.valid ? 16 : 0
       }
-    }, /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("div", {
       style: {
-        fontSize: 26
+        width: 36,
+        height: 36,
+        borderRadius: "50%",
+        background: result.valid ? "rgba(16, 185, 129, 0.15)" : "rgba(244, 63, 94, 0.15)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
       }
-    }, result.valid ? "✅" : "❌"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "check",
+      size: 18,
+      color: result.valid ? "#10b981" : "#f43f5e"
+    })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
       style: {
-        fontFamily: "var(--font)",
-        fontWeight: 700,
+        fontWeight: 600,
         fontSize: 15,
         color: result.valid ? "var(--green)" : "var(--red)"
       }
-    }, result.valid ? "Vote Verified on Blockchain" : "Hash Not Found"), /*#__PURE__*/React.createElement("p", {
+    }, result.valid ? "Vote Verified on Blockchain Ledger" : "Hash Not Found in Ledger"), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 12,
-        color: "var(--text3)"
+        color: "var(--text-dim)"
       }
-    }, result.valid ? "Your vote was counted correctly" : result.error || "Check the hash and try again"))), result.valid && /*#__PURE__*/React.createElement("div", {
+    }, result.valid ? "Cryptographic proof confirmed on immutable chain" : result.error || "Please verify receipt hash"))), result.valid && /*#__PURE__*/React.createElement("div", {
       style: {
         display: "flex",
         flexDirection: "column",
-        gap: 8
+        gap: 10
       }
-    }, [["Block ID", result.block, "var(--accent)"], ["Timestamp", result.timestamp, "var(--text)"], ["Confirmations", result.confirmations, "var(--green)"], ["zk-SNARK Proof", "VALID ✓", "var(--green)"], ["Ledger Status", "IMMUTABLE · TAMPER-PROOF", "var(--green)"]].map(([k, v, c]) => /*#__PURE__*/React.createElement("div", {
+    }, [["Block Identifier", result.block, "var(--accent)"], ["Block Timestamp", result.timestamp, "var(--text)"], ["Quorum Confirmations", result.confirmations, "var(--green)"], ["zk-SNARK Constraints", "SATISFIED ✓", "var(--green)"], ["Ledger Status", "IMMUTABLE · TAMPER-PROOF", "var(--green)"]].map(([k, v, c]) => /*#__PURE__*/React.createElement("div", {
       key: k,
       style: {
         display: "flex",
@@ -2056,58 +2528,65 @@
     }, /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 12,
-        color: "var(--text3)"
+        color: "var(--text-dim)"
       }
     }, k), /*#__PURE__*/React.createElement("span", {
       style: {
         fontSize: 13,
-        fontWeight: 700,
+        fontWeight: 600,
         color: c,
-        fontFamily: k === "Block ID" ? "var(--mono)" : "inherit"
+        fontFamily: k.includes("Block") ? "var(--mono)" : "inherit"
       }
     }, v))), /*#__PURE__*/React.createElement("p", {
       style: {
         fontSize: 11,
-        color: "var(--text3)",
+        color: "var(--text-dim)",
         fontFamily: "var(--mono)",
         fontStyle: "italic",
         marginTop: 4
       }
-    }, "\uD83C\uDFAD Vote choice permanently protected \u2014 cannot be revealed even by election officials.")))));
+    }, "Zero-Knowledge Proof guarantees privacy: Ballot content cannot be derived even with quantum scrutiny.")))));
   }
+
+  // Bottom Glass Floating Dock Navigation
   function NavBar({
     screen,
     onNavigate
   }) {
     const tabs = [{
       id: "home",
-      label: "Home",
-      icon: "🏠"
+      label: "Overview",
+      icon: "home"
     }, {
       id: "auth",
       label: "Vote",
-      icon: "🗳️"
+      icon: "vote"
     }, {
       id: "results",
-      label: "Results",
-      icon: "📊"
+      label: "Telemetry",
+      icon: "chart"
     }, {
       id: "audit",
       label: "Audit",
-      icon: "🔍"
+      icon: "audit"
     }];
-    return /*#__PURE__*/React.createElement("div", {
+    return /*#__PURE__*/React.createElement("nav", {
       style: {
         position: "fixed",
-        bottom: 0,
-        left: 0,
-        right: 0,
+        bottom: 20,
+        left: "50%",
+        transform: "translateX(-50%)",
         zIndex: 100,
-        background: "rgba(3,7,15,0.97)",
-        backdropFilter: "blur(16px)",
-        borderTop: "1px solid var(--border)",
+        background: "rgba(10, 14, 22, 0.85)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        border: "1px solid var(--border-bright)",
+        borderRadius: "var(--radius-full)",
+        padding: "5px 6px",
         display: "flex",
-        height: 56
+        alignItems: "center",
+        gap: 4,
+        boxShadow: "0 8px 32px -4px rgba(0, 0, 0, 0.7)"
       }
     }, tabs.map(t => {
       const active = screen === t.id || screen === "vote" && t.id === "auth" || screen === "success" && t.id === "auth";
@@ -2115,28 +2594,29 @@
         key: t.id,
         onClick: () => onNavigate(t.id),
         style: {
-          flex: 1,
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
-          gap: 2,
-          background: "transparent",
-          border: "none",
+          gap: 8,
+          padding: "8px 16px",
+          borderRadius: "var(--radius-full)",
+          background: active ? "rgba(14, 165, 233, 0.15)" : "transparent",
+          border: `1px solid ${active ? "rgba(14, 165, 233, 0.35)" : "transparent"}`,
+          color: active ? "#38bdf8" : "var(--text-dim)",
           cursor: "pointer",
-          color: active ? "var(--accent)" : "var(--text3)",
-          transition: "color 0.2s",
           fontFamily: "var(--font)",
-          fontSize: 10,
-          fontWeight: active ? 700 : 400
+          fontSize: 12,
+          fontWeight: active ? 600 : 500,
+          transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
         }
-      }, /*#__PURE__*/React.createElement("span", {
-        style: {
-          fontSize: 16
-        }
-      }, t.icon), t.label);
+      }, /*#__PURE__*/React.createElement(Icon, {
+        name: t.icon,
+        size: 15,
+        color: active ? "#38bdf8" : "var(--text-dim)"
+      }), /*#__PURE__*/React.createElement("span", null, t.label));
     }));
   }
+
+  // Master App Component
   function App() {
     const [screen, setScreen] = useState("home");
     const [voter, setVoter] = useState(null);
@@ -2181,7 +2661,7 @@
     };
     return /*#__PURE__*/React.createElement("div", {
       style: {
-        paddingBottom: 56,
+        minHeight: "100%",
         fontFamily: "var(--font)"
       }
     }, /*#__PURE__*/React.createElement(StatusBar, {
