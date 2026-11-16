@@ -15,6 +15,7 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
+(function() {
 const {useState,useEffect,useRef,useCallback}=React;
 const {
   VOTERS_DB,
@@ -763,6 +764,7 @@ function App(){
   );
 }
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+})();
 </script>
 </body>
 </html>
