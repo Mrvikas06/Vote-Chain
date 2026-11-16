@@ -70,7 +70,7 @@ async function runFullInteractiveUITest() {
     await new Promise(r => setTimeout(r, 1800));
 
     console.log("4. Testing OTP Step...");
-    const otpLink = await page.$('span[style*="cursor: pointer"], span[style*="cursor:pointer"]');
+    const otpLink = await page.$('span[style*="cursor: pointer"], span[style*="cursor:pointer"], .demo-chip');
     if (otpLink) {
       await otpLink.click();
       console.log("   Clicked demo OTP link.");
@@ -130,7 +130,7 @@ async function runFullInteractiveUITest() {
     console.log("   Vote verification confirmed on ledger!");
 
     console.log("8. Testing Results Screen...");
-    const resultsTab = (await page.$$("div[style*='position: fixed; bottom: 0'] button"))[2];
+    const resultsTab = (await page.$$("nav button, div[style*='position: fixed; bottom: 0'] button, div[style*='position: fixed'] button"))[2];
     await resultsTab.click();
     await new Promise(r => setTimeout(r, 800));
 
@@ -140,7 +140,7 @@ async function runFullInteractiveUITest() {
     console.log("   Leading candidate:", leadingCandidate);
 
     console.log("9. Testing Home Screen live feed update...");
-    const homeTab = (await page.$$("div[style*='position: fixed; bottom: 0'] button"))[0];
+    const homeTab = (await page.$$("nav button, div[style*='position: fixed; bottom: 0'] button, div[style*='position: fixed'] button"))[0];
     await homeTab.click();
     await new Promise(r => setTimeout(r, 800));
 
