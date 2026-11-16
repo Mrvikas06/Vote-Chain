@@ -2,11 +2,6 @@
 
 VoteChain is a secure, decentralized electronic voting prototype engineered to demonstrate tamper-evident ballot recording, end-to-end voter anonymity through zero-knowledge proofs (zk-SNARK simulations), multi-factor voter authentication, and real-time verifiable election tallying.
 
-## Live Deployment
-
-The system is deployed on GitHub Pages:
-https://mrvikas06.github.io/Vote-chain/
-
 ## Key Features
 
 - Multi-Factor Voter Authentication: Two-factor authentication pipeline combining 12-digit Aadhaar registry lookup, dynamic one-time password (OTP) verification, and biometric verification simulation.
