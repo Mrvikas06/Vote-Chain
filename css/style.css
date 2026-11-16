@@ -194,3 +194,17 @@ textarea:focus {
   border-radius: 50%;
   animation: blink 1.5s infinite;
 }
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .btn-primary,
+  .btn-ghost {
+    font-size: 13px;
+  }
+}
