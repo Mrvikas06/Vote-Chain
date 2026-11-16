@@ -7,6 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script src="src/blockchain.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="css/style.css"/>
@@ -15,29 +16,19 @@
 <div id="root"></div>
 <script type="text/babel">
 const {useState,useEffect,useRef,useCallback}=React;
-
-const VOTERS_DB={
-  "123456789012":{name:"Rahul Verma",age:35,gender:"Male",constituency:"New Delhi Central – 01",state:"Delhi",registeredPhone:"+91 98765 *****0",voterID:"DL/04/123/456789",photo:"👨"},
-  "987654321098":{name:"Sunita Patel",age:40,gender:"Female",constituency:"Mumbai South – 07",state:"Maharashtra",registeredPhone:"+91 91234 *****2",voterID:"MH/22/098/765432",photo:"👩"},
-  "456789012345":{name:"Arjun Singh",age:28,gender:"Male",constituency:"Bengaluru Urban – 12",state:"Karnataka",registeredPhone:"+91 87654 *****8",voterID:"KA/08/045/678901",photo:"🧑"},
-};
-const CANDIDATES=[
-  {id:"A",name:"Priya Sharma",party:"Progressive Alliance",abbr:"PA",symbol:"🌿",color:"#10b981",votes:142830,manifesto:"Clean energy, digital infrastructure, farmer welfare"},
-  {id:"B",name:"Rajesh Kumar",party:"National Unity Front",abbr:"NUF",symbol:"⚡",color:"#f59e0b",votes:138410,manifesto:"Economic growth, defence, urban development"},
-  {id:"C",name:"Anita Desai",party:"Peoples Democratic Party",abbr:"PDP",symbol:"🌊",color:"#3b82f6",votes:97650,manifesto:"Education reform, healthcare access, women safety"},
-  {id:"D",name:"Vikram Nair",party:"Aam Janta Party",abbr:"AJP",symbol:"🔆",color:"#a78bfa",votes:61200,manifesto:"Anti-corruption, transparency, youth employment"},
-  {id:"E",name:"NOTA",party:"None of the Above",abbr:"—",symbol:"✗",color:"#6b7280",votes:8900,manifesto:""},
-];
-const BLOCKCHAIN_LOG=[
-  {block:"#BLK-449821",hash:"0x3f9a...c142",tx:1204,time:"2 min ago",status:"CONFIRMED"},
-  {block:"#BLK-449820",hash:"0x7e2b...09fa",tx:998,time:"4 min ago",status:"CONFIRMED"},
-  {block:"#BLK-449819",hash:"0xb14c...3e77",tx:1101,time:"6 min ago",status:"CONFIRMED"},
-  {block:"#BLK-449818",hash:"0x5da0...7f23",tx:876,time:"8 min ago",status:"CONFIRMED"},
-];
-const genHash=()=>"0x"+Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join("");
-const genBlock=()=>"#BLK-"+(449822+Math.floor(Math.random()*10));
-const genOTP=()=>String(Math.floor(100000+Math.random()*900000));
-const fmtNum=n=>n.toLocaleString("en-IN");
+const {
+  VOTERS_DB,
+  INITIAL_CANDIDATES,
+  INITIAL_BLOCKCHAIN,
+  genHash,
+  genBlock,
+  genOTP,
+  fmtNum,
+  verifyAadhaar,
+  verifyOTP,
+  recordVote,
+  auditReceipt
+} = window.VoteChain || {};
 
 function StatusBar({voter}){
   const [time,setTime]=useState(new Date());
@@ -87,8 +78,10 @@ function TerminalLine({text,color="var(--text2)"}){
   );
 }
 
-function LandingScreen({onNavigate}){
-  const total=CANDIDATES.reduce((a,c)=>a+c.votes,0);
+function LandingScreen({onNavigate,candidates,blockchainLog}){
+  const cands=candidates||INITIAL_CANDIDATES;
+  const logs=blockchainLog||INITIAL_BLOCKCHAIN;
+  const total=cands.reduce((a,c)=>a+c.votes,0);
   return(
     <div style={{minHeight:"100vh",paddingTop:52,background:"var(--bg)",position:"relative",overflow:"hidden"}}>
       <div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(rgba(14,165,233,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(14,165,233,0.04) 1px,transparent 1px)",backgroundSize:"40px 40px"}}/>
@@ -127,7 +120,7 @@ function LandingScreen({onNavigate}){
                 {["Block","Hash","Transactions","Time","Status"].map(h=><th key={h} style={{padding:"10px 14px",textAlign:"left",color:"var(--text3)",fontWeight:500}}>{h}</th>)}
               </tr></thead>
               <tbody>
-                {BLOCKCHAIN_LOG.map((b,i)=>(
+                {logs.map((b,i)=>(
                   <tr key={b.block} style={{borderBottom:"1px solid var(--border)",animation:`chainAdd 0.4s ${i*0.1}s ease both`}}>
                     <td style={{padding:"11px 14px",color:"var(--accent)",fontWeight:700}}>{b.block}</td>
                     <td style={{padding:"11px 14px",color:"var(--text2)"}}>{b.hash}</td>
@@ -263,7 +256,8 @@ function AuthScreen({onSuccess}){
   );
 }
 
-function VoteScreen({voter,onVoted}){
+function VoteScreen({voter,candidates,onVoted}){
+  const cands=candidates||INITIAL_CANDIDATES;
   const [selected,setSelected]=useState(null);
   const [expanded,setExpanded]=useState(null);
   const [stage,setStage]=useState("pick");
@@ -285,7 +279,7 @@ function VoteScreen({voter,onVoted}){
       setEncLines(l=>[...l,{txt,color,id:Date.now()+i}]);
       setEncProgress(Math.round((i+1)/steps.length*100));
     },delay));
-    setTimeout(()=>onVoted(selected,genHash(),genBlock()),5000);
+    setTimeout(()=>onVoted(selected),5000);
   };
 
   if(stage==="encrypting")return(
@@ -335,7 +329,7 @@ function VoteScreen({voter,onVoted}){
         <h2 style={{fontFamily:"var(--font)",fontWeight:800,fontSize:21,color:"var(--text)",marginBottom:4}}>Select Your Candidate</h2>
         <p style={{fontSize:13,color:"var(--text3)",marginBottom:18}}>Tap to expand · Your choice is encrypted end-to-end</p>
         <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
-          {CANDIDATES.map(c=>{
+          {cands.map(c=>{
             const isSel=selected?.id===c.id,isExp=expanded===c.id;
             return(
               <div key={c.id} onClick={()=>{setSelected(c);setExpanded(isExp?null:c.id);}}
@@ -417,9 +411,10 @@ function SuccessScreen({voter,hash,blockId,onAudit,onResults,onReset}){
   );
 }
 
-function ResultsScreen(){
-  const total=CANDIDATES.reduce((a,c)=>a+c.votes,0);
-  const sorted=[...CANDIDATES].sort((a,b)=>b.votes-a.votes);
+function ResultsScreen({candidates}){
+  const cands=candidates||INITIAL_CANDIDATES;
+  const total=cands.reduce((a,c)=>a+c.votes,0);
+  const sorted=[...cands].sort((a,b)=>b.votes-a.votes);
   const [animated,setAnimated]=useState(false);
   useEffect(()=>{const t=setTimeout(()=>setAnimated(true),200);return()=>clearTimeout(t);},[]);
   return(
@@ -558,18 +553,35 @@ function App(){
   const [screen,setScreen]=useState("home");
   const [voter,setVoter]=useState(null);
   const [voteData,setVoteData]=useState(null);
+  const [candidates,setCandidates]=useState(INITIAL_CANDIDATES);
+  const [blockchainLog,setBlockchainLog]=useState(INITIAL_BLOCKCHAIN);
+  const [receiptLedger,setReceiptLedger]=useState({});
+
   const navigate=useCallback((s)=>{if(s==="auth"&&voteData){setScreen("success");return;}setScreen(s);},[voteData]);
   const handleAuth=(v)=>{setVoter(v);setScreen("vote");};
-  const handleVoted=(candidate,hash,blockId)=>{setVoteData({candidate,hash,blockId});setScreen("success");};
+  const handleVoted=(candidate)=>{
+    const res=recordVote({
+      candidateId:candidate.id,
+      voter,
+      candidates,
+      blockchainLog,
+      receiptLedger
+    });
+    setCandidates(res.updatedCandidates);
+    setBlockchainLog(res.updatedBlockchainLog);
+    setReceiptLedger(res.updatedLedger);
+    setVoteData(res.receipt);
+    setScreen("success");
+  };
   const handleReset=()=>{setVoter(null);setVoteData(null);setScreen("home");};
   return(
     <div style={{paddingBottom:56,fontFamily:"var(--font)"}}>
       <StatusBar voter={voter}/>
-      {screen==="home"&&<LandingScreen onNavigate={navigate}/>}
+      {screen==="home"&&<LandingScreen onNavigate={navigate} candidates={candidates} blockchainLog={blockchainLog}/>}
       {screen==="auth"&&<AuthScreen onSuccess={handleAuth}/>}
-      {screen==="vote"&&<VoteScreen voter={voter} onVoted={handleVoted}/>}
+      {screen==="vote"&&<VoteScreen voter={voter} candidates={candidates} onVoted={handleVoted}/>}
       {screen==="success"&&<SuccessScreen voter={voter} hash={voteData.hash} blockId={voteData.blockId} onAudit={()=>setScreen("audit")} onResults={()=>setScreen("results")} onReset={handleReset}/>}
-      {screen==="results"&&<ResultsScreen/>}
+      {screen==="results"&&<ResultsScreen candidates={candidates}/>}
       {screen==="audit"&&<AuditScreen defaultHash={voteData?.hash||""}/>}
       <NavBar screen={screen} onNavigate={navigate}/>
     </div>
